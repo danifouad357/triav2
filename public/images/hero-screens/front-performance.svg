@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#123f31"/><stop offset=".6" stop-color="#041810"/><stop offset="1" stop-color="#020604"/></linearGradient></defs>
+  <rect width="1920" height="1080" fill="url(#g)"/><circle cx="1550" cy="250" r="300" fill="#36c992" opacity=".12"/>
+  <text x="150" y="150" fill="#79e4b6" font-family="monospace" font-size="25" letter-spacing="6">TRIA DESIGN / 02</text>
+  <text x="150" y="430" fill="#f7f5f2" font-family="Georgia,serif" font-size="104">Speed is a feature.</text>
+  <text x="150" y="535" fill="#c6d8d0" font-family="Arial,sans-serif" font-size="34">Lean builds. Optimised media. Fewer reasons to wait.</text>
+  <path d="M150 700h520M150 760h900M150 820h1420" stroke="#79e4b6" stroke-opacity=".5" stroke-width="5"/>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <defs><radialGradient id="g" cx="70%" cy="20%"><stop stop-color="#174f3c"/><stop offset="1" stop-color="#020806"/></radialGradient></defs>
+  <rect width="1920" height="1080" fill="url(#g)"/><path d="M0 820C420 650 780 720 1120 500s620-60 800-20v600H0Z" fill="#061811" opacity=".8"/>
+  <text x="150" y="150" fill="#79e4b6" font-family="monospace" font-size="25" letter-spacing="6">TRIA DESIGN / 01</text>
+  <text x="150" y="430" fill="#f7f5f2" font-family="Georgia,serif" font-size="104">Clarity before code.</text>
+  <text x="150" y="535" fill="#c6d8d0" font-family="Arial,sans-serif" font-size="34">A clear point of view gives every page a job.</text>
+  <line x1="150" y1="650" x2="1770" y2="650" stroke="#79e4b6" stroke-opacity=".35"/>
+  <text x="150" y="745" fill="#f7f5f2" font-family="monospace" font-size="22" letter-spacing="3">POSITIONING  /  STRUCTURE  /  CONTENT</text>
+</svg>

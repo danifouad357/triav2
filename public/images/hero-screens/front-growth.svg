@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <defs><radialGradient id="g"><stop stop-color="#1c5a43"/><stop offset="1" stop-color="#020806"/></radialGradient></defs>
+  <rect width="1920" height="1080" fill="url(#g)"/><path d="M0 1000 420 700l280 180 380-430 310 190 530-510v870Z" fill="#0a2c20" opacity=".8"/>
+  <text x="150" y="150" fill="#79e4b6" font-family="monospace" font-size="25" letter-spacing="6">TRIA DESIGN / 03</text>
+  <text x="150" y="430" fill="#f7f5f2" font-family="Georgia,serif" font-size="104">Designed to move.</text>
+  <text x="150" y="535" fill="#c6d8d0" font-family="Arial,sans-serif" font-size="34">A website should make the next decision feel natural.</text>
+  <text x="150" y="760" fill="#f7f5f2" font-family="monospace" font-size="22" letter-spacing="3">TRUST  →  ACTION  →  MOMENTUM</text>
+</svg>

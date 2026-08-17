@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#f7f5f2"/><rect x="95" y="95" width="1730" height="890" fill="#fff" stroke="#161616" stroke-opacity=".16"/>
+  <text x="150" y="175" fill="#b89b73" font-family="monospace" font-size="24" letter-spacing="5">TRIA DESIGN / SELECTED WORKS</text>
+  <text x="150" y="295" fill="#161616" font-family="Georgia,serif" font-size="84">Websites built around</text><text x="150" y="390" fill="#161616" font-family="Georgia,serif" font-size="84">the business behind them.</text>
+  <line x1="150" y1="490" x2="1770" y2="490" stroke="#161616" stroke-opacity=".15"/>
+  <text x="150" y="585" fill="#161616" font-family="monospace" font-size="24">01 / VOLT GYM</text><text x="950" y="585" fill="#161616" font-family="monospace" font-size="24">02 / AURA ROASTERY</text>
+  <text x="150" y="705" fill="#161616" font-family="monospace" font-size="24">03 / SILA</text><text x="950" y="705" fill="#161616" font-family="monospace" font-size="24">04 / BIOLOGUE</text>
+  <rect x="150" y="830" width="1620" height="55" fill="#161616"/><text x="960" y="866" text-anchor="middle" fill="#f7f5f2" font-family="monospace" font-size="20" letter-spacing="3">SCROLL TO EXPLORE THE ARCHIVE</text>
+</svg>
