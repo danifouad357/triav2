@@ -31,6 +31,12 @@ const frontTextures = [
   "/images/hero-screens/section-3.jpeg",
 ];
 
+const mobileFrontTextures = [
+  "/images/hero-screens/mobile-1.jpeg",
+  "/images/hero-screens/mobile-2.jpeg",
+  "/images/hero-screens/mobile-3.jpeg",
+];
+
 // ─── DEV CONFIG ───────────────────────────────────────────────────────────────
 // Tweak these values to adjust the layout.
 const INITIAL_DEV = {
@@ -67,7 +73,7 @@ const INITIAL_DEV = {
   inertiaEatMs: 600,
 
   // ── TRANSITION TIMING ────────────────────────────────────────────────────
-  rotationDurationMs: 1800,
+  rotationDurationMs: 1400,
   crossfadeDurationMs: 650,
 
 };
@@ -79,7 +85,10 @@ export default function CinematicSequence({ isPaused = false }: { isPaused?: boo
   const [scene, setScene] = useState(0);
   const [stage, setStage] = useState<HeroStage>("boot");
   const [rotationProgress, setRotationProgress] = useState(0);
-  const [currentTexture, setCurrentTexture] = useState(frontTextures[0]);
+  const [isMobile, setIsMobile] = useState(false);
+  const activeTextures = isMobile ? mobileFrontTextures : frontTextures;
+
+  const [currentTexture, setCurrentTexture] = useState(activeTextures[0]);
   const [nextTexture, setNextTexture] = useState("");
   const [textureBlend, setTextureBlend] = useState(0);
   const [isPageScrolling, setIsPageScrolling] = useState(false);
@@ -112,7 +121,23 @@ export default function CinematicSequence({ isPaused = false }: { isPaused?: boo
       setScene(maxScene);
     };
     window.addEventListener('forceUnlockScroll', handleForceUnlock);
-    return () => window.removeEventListener('forceUnlockScroll', handleForceUnlock);
+    
+    const mql = window.matchMedia("(max-width: 768px)");
+    setIsMobile(mql.matches);
+    if (mql.matches) {
+      setCurrentTexture(mobileFrontTextures[sceneRef.current > 1 ? sceneRef.current - 2 : 0]);
+    }
+    const mqlHandler = (e: MediaQueryListEvent) => {
+      setIsMobile(e.matches);
+      if (e.matches) setCurrentTexture(mobileFrontTextures[sceneRef.current > 1 ? sceneRef.current - 2 : 0]);
+      else setCurrentTexture(frontTextures[sceneRef.current > 1 ? sceneRef.current - 2 : 0]);
+    };
+    mql.addEventListener("change", mqlHandler);
+
+    return () => {
+      window.removeEventListener('forceUnlockScroll', handleForceUnlock);
+      mql.removeEventListener("change", mqlHandler);
+    };
   }, []);
   useEffect(() => {
     if (!isPageScrolling) {
@@ -126,6 +151,13 @@ export default function CinematicSequence({ isPaused = false }: { isPaused?: boo
       document.body.style.overflow = '';
       document.body.style.touchAction = '';
     }
+
+    return () => {
+      if (lenis) lenis.start();
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+    };
   }, [lenis, isPageScrolling]);
 
   const crossfade = useCallback((from: string, to: string, done: () => void) => {
@@ -171,21 +203,21 @@ export default function CinematicSequence({ isPaused = false }: { isPaused?: boo
         setRotationProgress(1); 
         if (from < 2) {
             // First rotation: wait for the video to play through at 4.2x
-            setCurrentTexture(frontTextures[0]); setNextTexture(""); setTimeout(finish, devRef.current.rotationDurationMs); 
+            setCurrentTexture(activeTextures[0]); setNextTexture(""); setTimeout(finish, devRef.current.rotationDurationMs); 
         } else {
-            crossfade(frontTextures[from - 2] || frontTextures[0], frontTextures[0], finish);
+            crossfade(activeTextures[from - 2] || activeTextures[0], activeTextures[0], finish);
         }
         return; 
     }
     
     // Scene 3: Front view - Reason 2
     if (target === 3) {
-        setStage("portfolio"); setRotationProgress(1); crossfade(frontTextures[from - 2] || frontTextures[1], frontTextures[1], finish); return;
+        setStage("portfolio"); setRotationProgress(1); crossfade(activeTextures[from - 2] || activeTextures[1], activeTextures[1], finish); return;
     }
     
     // Scene 4: Front view - Reason 3
     if (target === 4) {
-        setStage("portfolio"); setRotationProgress(1); crossfade(frontTextures[from - 2] || frontTextures[2], frontTextures[2], finish); return;
+        setStage("portfolio"); setRotationProgress(1); crossfade(activeTextures[from - 2] || activeTextures[2], activeTextures[2], finish); return;
     }
 
     // Scene 5: Expand transition → auto-scroll to portfolio
@@ -294,43 +326,46 @@ export default function CinematicSequence({ isPaused = false }: { isPaused?: boo
         animate={{ 
           scale: scene === 5 ? 3 : 1, 
           opacity: scene === 5 ? 0 : 1,
-          x: (scene >= 2 && scene <= 4) ? `${dev.videoShiftX}%` : "0%",
+          x: (scene >= 2 && scene <= 4) ? (isMobile ? "0%" : `${dev.videoShiftX}%`) : "0%",
         }}
         transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
         className="absolute inset-0 z-0 pointer-events-none"
         style={{
           // Feather the left edge of the video — controlled by DEV.videoFeather*
-          WebkitMaskImage: (scene >= 2 && scene <= 4)
+          WebkitMaskImage: (scene >= 2 && scene <= 4 && !isMobile)
             ? `linear-gradient(to right, transparent ${dev.videoFeatherStart}%, rgba(0,0,0,0.4) ${dev.videoFeatherMid}%, black ${dev.videoFeatherEnd}%)`
             : "none",
-          maskImage: (scene >= 2 && scene <= 4)
+          maskImage: (scene >= 2 && scene <= 4 && !isMobile)
             ? `linear-gradient(to right, transparent ${dev.videoFeatherStart}%, rgba(0,0,0,0.4) ${dev.videoFeatherMid}%, black ${dev.videoFeatherEnd}%)`
             : "none",
         }}
       >
         <ChromaHomographyRenderer 
-          videoSrc="/videos/hero-sequence.mp4" 
-          videoSrcLoop="/videos/scene1-loop.mp4"
-          videoFrontLoopSrc="/videos/front-loop.mp4"
-          videoReverseSrc="/videos/hero-reverse.mp4" 
+          key={isMobile ? "mobile" : "desktop"}
+          videoSrc={isMobile ? "/videos/mobile-hero.mp4" : "/videos/hero-sequence.mp4"} 
+          videoSrcLoop={isMobile ? "" : "/videos/scene1-loop.mp4"}
+          videoFrontLoopSrc={isMobile ? "" : "/videos/front-loop.mp4"}
+          videoReverseSrc={isMobile ? "" : "/videos/hero-reverse.mp4"}
           stage={stage} 
           rotationProgress={rotationProgress} 
           currentTextureSrc={currentTexture} 
           nextTextureSrc={nextTexture} 
           textureBlend={textureBlend} 
-          preloadTextures={frontTextures}
+          preloadTextures={isMobile ? mobileFrontTextures : frontTextures}
+          onVideoLoaded={() => window.dispatchEvent(new Event('tria-app-ready'))}
+          isMobile={isMobile}
         />
       </motion.div>
 
       <AnimatePresence mode="wait">
         {scene <= 1 && (
-           <motion.div key={`title-${scene}`} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="absolute inset-y-0 left-0 z-10 flex w-full pointer-events-none lg:w-1/2">
-             <div className="container flex items-center">
-               <div className="max-w-xl">
-                 <span className="font-mono text-[0.72rem] tracking-[0.15em] uppercase font-medium text-[var(--color-brass-deep)] mb-4 block">
+           <motion.div key={`title-${scene}`} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="absolute inset-0 z-10 flex pointer-events-none">
+             <div className={`w-full flex ${isMobile ? "items-end justify-center pb-12 px-6" : "items-center container"}`}>
+               <div className={`max-w-xl ${isMobile ? "p-6 rounded-[20px] bg-[#F7F5F2]/80 backdrop-blur-xl shadow-2xl border border-white/40 text-center" : ""}`}>
+                 <span className={`font-mono text-[0.72rem] tracking-[0.15em] uppercase font-medium mb-4 block ${isMobile ? "text-[var(--color-brass-deep)]" : "text-[var(--color-brass-deep)]"}`}>
                     {scene === 0 ? "SYS_INIT // BOOT LOADER" : "SYS_READY // IDENTITY VERIFIED"}
                   </span>
-                  <h1 className="font-sans font-[800] tracking-[-0.02em] text-display-2xl leading-[1.08] mb-6 max-w-[15ch] text-[var(--color-ink)]">
+                  <h1 className={`font-sans font-[800] tracking-[-0.02em] leading-[1.08] mb-6 max-w-[15ch] text-[var(--color-ink)] ${isMobile ? "text-4xl mx-auto" : "text-display-2xl"}`}>
                     {scene === 0 ? (
                       <>
                         We build fast, <em className="font-serif italic font-medium text-[var(--color-brass-deep)] text-[0.98em]">purposeful</em> websites.
@@ -341,7 +376,7 @@ export default function CinematicSequence({ isPaused = false }: { isPaused?: boo
                       </>
                     )}
                   </h1>
-                  <p className="text-[1.08rem] leading-[1.6] text-[var(--color-ink-muted)] max-w-[42ch] mb-14">
+                  <p className={`text-[1.08rem] leading-[1.6] text-[var(--color-ink-muted)] mb-14 ${isMobile ? "max-w-xs mx-auto" : "max-w-[42ch]"}`}>
                     Lean builds and deliberate decisions — nothing recycled, nothing extra.
                   </p>
                   <div className="font-mono text-[0.68rem] tracking-[0.18em] uppercase text-[var(--color-cream-muted)] border-t border-[var(--color-hair-cream)] pt-4 inline-block">
@@ -364,39 +399,45 @@ export default function CinematicSequence({ isPaused = false }: { isPaused?: boo
             className="absolute inset-0 z-20 pointer-events-none"
           >
             {/* Left-side gradient — DEV.gradientWidth / DEV.gradientSolidStop / DEV.gradientMidStop */}
-            <div
-              className="absolute inset-y-0 left-0 pointer-events-none"
-              style={{
-                width: `${dev.gradientWidth}%`,
-                background: `linear-gradient(to right, ${dev.bgColor} 0%, ${dev.bgColor} ${dev.gradientSolidStop}%, ${dev.bgColor}B3 ${dev.gradientMidStop}%, transparent 100%)`,
-              }}
-            />
+            {!isMobile && (
+              <div
+                className="absolute inset-y-0 left-0 pointer-events-none"
+                style={{
+                  width: `${dev.gradientWidth}%`,
+                  background: `linear-gradient(to right, ${dev.bgColor} 0%, ${dev.bgColor} ${dev.gradientSolidStop}%, ${dev.bgColor}B3 ${dev.gradientMidStop}%, transparent 100%)`,
+                }}
+              />
+            )}
 
             {/* Floating editorial text — DEV.textLeftInset / DEV.textMaxWidth */}
             <div
-              className="absolute inset-y-0 flex items-center pointer-events-none"
-              style={{ left: `${dev.textLeftInset}rem` }}
+              className={`absolute flex pointer-events-none ${isMobile ? "bottom-12 inset-x-6 justify-center" : "inset-y-0 items-center"}`}
+              style={!isMobile ? { left: `${dev.textLeftInset}rem` } : {}}
             >
-              <div style={{ maxWidth: `${dev.textMaxWidth}rem` }}>
+              <div 
+                className={isMobile ? "p-6 rounded-[20px] bg-[#F7F5F2]/80 backdrop-blur-xl shadow-2xl border border-white/40 text-center" : ""}
+                style={{ maxWidth: `${dev.textMaxWidth}rem` }}
+              >
                 {/* Eyebrow — DEV.eyebrowColor */}
                 <span 
-                  className="block font-sans font-bold text-[11px] tracking-[0.22em] uppercase mb-5"
-                  style={{ color: dev.eyebrowColor }}
+                  className={`block font-sans font-bold text-[11px] tracking-[0.22em] uppercase mb-4 ${isMobile ? "text-[var(--color-brass-deep)]" : ""}`}
+                  style={!isMobile ? { color: dev.eyebrowColor } : {}}
                 >
                   {lockMessages[scene - 2].label}
                 </span>
 
                 {/* Title — DEV.titleSize / DEV.titleColor */}
                 <h2
-                  className="font-serif leading-[1.08] tracking-[-0.01em] mb-5"
-                  style={{ color: dev.titleColor, fontSize: `${dev.titleSize}rem` }}
+                  className="font-serif leading-[1.08] tracking-[-0.01em] mb-4"
+                  style={{ color: dev.titleColor, fontSize: isMobile ? "2.5rem" : `${dev.titleSize}rem` }}
                 >
                   {lockMessages[scene - 2].title}
                 </h2>
 
                 {/* Body — DEV.bodySize / DEV.bodyColor / DEV.bodyLineHeight */}
                 <p 
-                  style={{ color: dev.bodyColor, fontSize: `${dev.bodySize}rem`, lineHeight: dev.bodyLineHeight }}
+                  className={isMobile ? "text-[1rem] leading-[1.5] text-[var(--color-ink-muted)]" : ""}
+                  style={!isMobile ? { color: dev.bodyColor, fontSize: `${dev.bodySize}rem`, lineHeight: dev.bodyLineHeight } : {}}
                 >
                   {lockMessages[scene - 2].body}
                 </p>

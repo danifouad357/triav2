@@ -29,15 +29,17 @@
   --color-white: #ffffff;
 
   /* Spacing */
-  --space-xs: 0.5rem;
-  --space-sm: 1rem;
-  --space-md: 2rem;
-  --space-lg: 4rem;
-  --space-xl: 8rem;
+  --space-xs: clamp(0.25rem, 1vw, 0.5rem);
+  --space-sm: clamp(0.5rem, 2vw, 1rem);
+  --space-md: clamp(1rem, 3vw, 2rem);
+  --space-lg: clamp(2rem, 5vw, 4rem);
+  --space-xl: clamp(4rem, 8vw, 8rem);
   
   /* Layout */
   --container-width: 1400px;
-  --container-padding: 2rem;
+  --container-padding: clamp(1rem, 4vw, 2rem);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
 }
 
 /* Reset */
@@ -59,17 +61,22 @@ body {
   overflow-x: clip;
 }
 
-h1 { font-size: clamp(3rem, 6vw, 5.5rem); letter-spacing: -0.02em; }
-h2 { font-size: clamp(2.5rem, 5vw, 4.5rem); letter-spacing: -0.02em; }
-h3 { font-size: clamp(2rem, 3vw, 2.5rem); }
-h4 { font-size: clamp(1.5rem, 2vw, 2rem); }
-p { font-size: 1.125rem; line-height: 1.6; max-width: 65ch; color: var(--color-text-muted); }
+h1 { font-size: clamp(3rem, 6vw, 5.5rem); letter-spacing: -0.02em; text-wrap: balance; }
+h2 { font-size: clamp(2.5rem, 5vw, 4.5rem); letter-spacing: -0.02em; text-wrap: balance; }
+h3 { font-size: clamp(2rem, 3vw, 2.5rem); text-wrap: balance; }
+h4 { font-size: clamp(1.5rem, 2vw, 2rem); text-wrap: balance; }
+p { font-size: 1.125rem; line-height: 1.6; max-width: 65ch; color: var(--color-text-muted); text-wrap: pretty; }
 
 .text-small { font-size: 0.875rem; color: var(--color-text-light); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500; }
 .text-italic { font-style: italic; }
 
 /* Layout Utilities */
-.container { max-width: var(--container-width); margin: 0 auto; padding: 0 var(--container-padding); }
+.container { 
+  max-width: var(--container-width); 
+  margin: 0 auto; 
+  padding-left: calc(var(--container-padding) + var(--safe-area-left));
+  padding-right: calc(var(--container-padding) + var(--safe-area-right));
+}
 .section { padding: var(--space-xl) 0; }
 .grid-2 { display: grid; grid-template-columns: repeat(1, 1fr); gap: var(--space-lg); }
 @media (min-width: 768px) { .grid-2 { grid-template-columns: repeat(2, 1fr); } }
@@ -102,4 +109,12 @@ img { max-width: 100%; height: auto; display: block; }
 /* Static Slow-Drifting Brass Light-Leak */
 @keyframes drift { 0% { transform: translate(0, 0) scale(1); } 33% { transform: translate(40px, -60px) scale(1.05); } 66% { transform: translate(-30px, 30px) scale(0.95); } 100% { transform: translate(0, 0) scale(1); } }
 .light-leak { position: absolute; width: 800px; height: 800px; background: radial-gradient(circle, rgba(197, 160, 89, 0.12) 0%, transparent 60%); filter: blur(80px); border-radius: 50%; pointer-events: none; z-index: 0; animation: drift 25s infinite ease-in-out; top: -200px; right: -200px; }
-@media (prefers-reduced-motion: reduce) { .light-leak { animation: none; } }
+@media (prefers-reduced-motion: reduce) { 
+  .light-leak { animation: none; } 
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -504,7 +504,23 @@ export class TriaCanvasEngine {
       ctx.save();
       ctx.globalAlpha = easeProgress;
       if (this.lockFieldSvgImage && this.svgLoaded) {
-        ctx.drawImage(this.lockFieldSvgImage, 0, 0, w, h);
+        // Draw with object-fit: cover logic to prevent stretching on mobile
+        const imgRatio = 1920 / 1080;
+        const canvasRatio = w / h;
+        let drawWidth, drawHeight, offsetX, offsetY;
+        
+        if (canvasRatio > imgRatio) {
+          drawWidth = w;
+          drawHeight = w / imgRatio;
+          offsetX = 0;
+          offsetY = (h - drawHeight) / 2;
+        } else {
+          drawHeight = h;
+          drawWidth = h * imgRatio;
+          offsetX = (w - drawWidth) / 2;
+          offsetY = 0;
+        }
+        ctx.drawImage(this.lockFieldSvgImage, offsetX, offsetY, drawWidth, drawHeight);
       } else {
         // Instant procedural fallback
         ctx.fillStyle = '#041a12';

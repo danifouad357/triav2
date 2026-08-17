@@ -11,12 +11,12 @@ export default function SelectedWork() {
     <section id="work" className="section bg-[var(--color-bg)]">
       <div className="container">
         <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 'var(--space-lg)', marginBottom: 'var(--space-xl)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 'var(--space-md)' }}>
+          <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-4">
             <div>
               <span className="eyebrow">01 / SELECTED WORK</span>
               <RevealText style={{ maxWidth: '600px' }}>Digital experiences, meticulously crafted.</RevealText>
             </div>
-            <Link to="/work" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, fontSize: '0.875rem', marginTop: 'var(--space-md)' }} className="text-[var(--color-text)] hover:text-[var(--color-brand-brass)] transition-colors">
+            <Link to="/work" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontWeight: 600, fontSize: '0.875rem', marginTop: 'var(--space-md)' }} className="text-[var(--color-text)] hover:text-[var(--color-brand-brass)] transition-colors min-h-[44px]">
               View All Work <ArrowRight size={16} />
             </Link>
           </div>
@@ -54,9 +54,11 @@ export default function SelectedWork() {
                   alt={project.title}
                   className="project-image transition-transform duration-700 group-hover:scale-105"
                   style={{ width: '100%', aspectRatio: '16/9', height: 'auto', objectFit: 'cover' }}
+                  loading="lazy"
+                  sizes="(max-width: 768px) 100vw, 50vw"
                 />
               </Link>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+              <div className="flex justify-between items-start">
                 <div>
                   <h3 className="text-2xl font-serif mb-2">{project.title}</h3>
                   <p style={{ fontSize: '0.875rem' }} className="text-[var(--color-text-muted)]">{project.hook}</p>
@@ -75,9 +77,11 @@ export default function SelectedWork() {
                 alt={featuredProjects[3].title}
                 className="project-image transition-transform duration-700 group-hover:scale-105"
                 style={{ width: '100%', aspectRatio: '16/9', height: 'auto', objectFit: 'cover' }}
+                loading="lazy"
+                sizes="100vw"
               />
             </Link>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div className="flex justify-between items-start">
               <div>
                 <h3 className="text-2xl font-serif mb-2">{featuredProjects[3].title}</h3>
                 <p style={{ fontSize: '0.875rem' }} className="text-[var(--color-text-muted)]">{featuredProjects[3].hook}</p>

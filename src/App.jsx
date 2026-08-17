@@ -19,29 +19,41 @@ const NotFound = lazy(() => import('@/pages/NotFound'));
 
 import './index.css';
 
+const isTouchDevice = typeof window !== 'undefined' ? window.matchMedia('(pointer: coarse)').matches : false;
+
 function App() {
+  const content = (
+    <>
+      <div className="grain-overlay" />
+      <CustomCursor />
+      <ScrollToTop />
+      <Header />
+      <Suspense fallback={<div className="min-h-screen bg-[var(--color-cream)]"></div>}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/work" element={<WorkIndex />} />
+          <Route path="/work/:slug" element={<ProjectSingle />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Suspense>
+      <Footer />
+    </>
+  );
+
   return (
     <Router>
-      <ReactLenis root>
-        <div className="grain-overlay" />
-        <CustomCursor />
-        <ScrollToTop />
-        <Header />
-        <Suspense fallback={<div className="min-h-screen bg-[var(--color-cream)]"></div>}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/work" element={<WorkIndex />} />
-            <Route path="/work/:slug" element={<ProjectSingle />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
-        <Footer />
-      </ReactLenis>
+      {isTouchDevice ? (
+        content
+      ) : (
+        <ReactLenis root>
+          {content}
+        </ReactLenis>
+      )}
     </Router>
   );
 }

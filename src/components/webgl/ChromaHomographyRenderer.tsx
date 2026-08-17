@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { getInterpolatedCorners } from "@/lib/trackingData";
 import { getHomographyMatrix } from "@/lib/homography";
 import { TriaCanvasEngine } from "@/lib/tria-os/TriaCanvasEngine";
+import { getMobileInterpolatedCorners } from "@/lib/mobileTrackingData";
 
 
 export type HeroStage = "boot" | "lock" | "portfolio";
@@ -18,6 +19,7 @@ export interface ChromaHomographyRendererProps {
   textureBlend?: number; // 0.0 to 1.0
   onVideoLoaded?: () => void;
   preloadTextures?: string[];
+  isMobile?: boolean;
 }
 
 export default function ChromaHomographyRenderer({
@@ -32,6 +34,7 @@ export default function ChromaHomographyRenderer({
   textureBlend = 0,
   onVideoLoaded,
   preloadTextures = [],
+  isMobile = false,
 }: ChromaHomographyRendererProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -97,7 +100,11 @@ export default function ChromaHomographyRenderer({
 
   // Initialize WebGL, Shaders, Texture Cache, and TRIA OS Engine
   useEffect(() => {
-    // Create TRIA Canvas Engine
+    const CANVAS_W = isMobile ? 1080 : 1920;
+    const CANVAS_H = isMobile ? 1920 : 1080;
+
+    // Create TRIA Canvas Engine — always at native 1920x1080 landscape
+    // The WebGL shader handles mapping/cropping it onto the phone quad
     if (!triaCanvasRef.current) {
       const offscreen = document.createElement("canvas");
       offscreen.width = 1920;
@@ -379,25 +386,25 @@ export default function ChromaHomographyRenderer({
         gl.bindTexture(gl.TEXTURE_2D, tex);
 
         if (!src.endsWith(".gif") && !src.endsWith(".svg")) {
-          // Force 16:9 aspect ratio (object-fit: cover) to prevent stretching on the laptop screen
+          // Force aspect ratio (object-fit: cover) to prevent stretching
           const offscreen = document.createElement("canvas");
-          offscreen.width = 1920;
-          offscreen.height = 1080;
+          offscreen.width = CANVAS_W;
+          offscreen.height = CANVAS_H;
           const ctx = offscreen.getContext("2d");
           if (ctx) {
             const imgRatio = img.width / img.height;
-            const canvasRatio = 1920 / 1080;
-            let drawWidth = 1920;
-            let drawHeight = 1080;
+            const canvasRatio = CANVAS_W / CANVAS_H;
+            let drawWidth = CANVAS_W;
+            let drawHeight = CANVAS_H;
             let offsetX = 0;
             let offsetY = 0;
             
             if (imgRatio > canvasRatio) { 
-              drawWidth = 1080 * imgRatio;
-              offsetX = (1920 - drawWidth) / 2;
+              drawWidth = CANVAS_H * imgRatio;
+              offsetX = (CANVAS_W - drawWidth) / 2;
             } else { 
-              drawHeight = 1920 / imgRatio;
-              offsetY = (1080 - drawHeight) / 2;
+              drawHeight = CANVAS_W / imgRatio;
+              offsetY = (CANVAS_H - drawHeight) / 2;
             }
             
             ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
@@ -469,10 +476,18 @@ export default function ChromaHomographyRenderer({
     const crossfadeDuration = 380; // ms
     let crossfadeFromVideo: HTMLVideoElement | null = null;
     let lastRenderedStage: HeroStage | null = null;
+    
+    // PERFORMANCE OPTIMIZATION: Track uploaded times AND video objects to prevent uploading the same video frame multiple times
+    let lastUploadedVideo: HTMLVideoElement | null = null;
+    let lastUploadedVideoTime = -1;
+    let lastUploadedPrevVideo: HTMLVideoElement | null = null;
+    let lastUploadedPrevVideoTime = -1;
 
     const startVideoCrossfade = (fromVid: HTMLVideoElement | null) => {
       crossfadeFromVideo = fromVid;
       crossfadeStartTime = performance.now();
+      lastUploadedPrevVideo = null;
+      lastUploadedPrevVideoTime = -1; // Reset to force first upload
     };
 
     if (videoLoop) playSafe(videoLoop);
@@ -498,7 +513,7 @@ export default function ChromaHomographyRenderer({
           videoRevPresentedTime = -1;
           if (videoReverse) {
             videoReverse.currentTime = 0.01;
-            videoReverse.playbackRate = 4.2;
+            videoReverse.playbackRate = 5.5;
             playSafe(videoReverse);
           }
           if (videoFrontLoop && !videoFrontLoop.paused) videoFrontLoop.pause();
@@ -514,7 +529,7 @@ export default function ChromaHomographyRenderer({
           rotationFinished = false;
           videoPresentedTime = -1;
           video.currentTime = 0.001;
-          video.playbackRate = 4.2;
+          video.playbackRate = 5.5;
           playSafe(video);
           startVideoCrossfade(videoLoop);
         }
@@ -530,23 +545,24 @@ export default function ChromaHomographyRenderer({
           videoRevPresentedTime >= 0
             ? videoRevPresentedTime
             : videoReverse.currentTime;
-        const REVERSE_END_TIME = 248 / 30; // ~8.266s
+        const maxFrame = isMobile ? 191 : 248;
+        const REVERSE_END_TIME = maxFrame / 30; // ~8.266s or ~6.36s
 
         if (curRevTime < REVERSE_END_TIME - 0.08) {
-          activeFrame = Math.max(1, Math.min(248, 248 - curRevTime * 30));
+          activeFrame = Math.max(1, Math.min(maxFrame, maxFrame - curRevTime * 30));
           activeVideo = videoReverse;
         } else {
           // Finished reverse rotation back to 3/4 lock screen
           isReversing = false;
           videoReverse.pause();
-          videoReverse.currentTime = 0;
-          videoRevPresentedTime = -1;
           activeFrame = 1;
           if (videoLoop) {
             videoLoop.currentTime = 0;
             playSafe(videoLoop);
             startVideoCrossfade(videoReverse);
             activeVideo = videoLoop;
+          } else {
+            activeVideo = video;
           }
         }
       } else if (is3DLock) {
@@ -555,8 +571,13 @@ export default function ChromaHomographyRenderer({
         if (!video.paused) video.pause();
         if (videoFrontLoop && !videoFrontLoop.paused) videoFrontLoop.pause();
 
-        playSafe(videoLoop);
-        activeVideo = videoLoop;
+        if (videoLoop) {
+          playSafe(videoLoop);
+          activeVideo = videoLoop;
+        } else {
+          activeVideo = video;
+          if (video && video.currentTime > 0) video.currentTime = 0; // Force first frame for lockscreen
+        }
         activeFrame = 1;
       } else if (isPortfolio) {
         isReversing = false;
@@ -564,12 +585,13 @@ export default function ChromaHomographyRenderer({
 
         const curTime =
           videoPresentedTime >= 0 ? videoPresentedTime : video.currentTime;
-        const ROTATION_END_TIME = 248 / 30; // ~8.266s
+        const maxFrame = isMobile ? 191 : 248;
+        const ROTATION_END_TIME = maxFrame / 30; 
 
         if (!rotationFinished && curTime < ROTATION_END_TIME - 0.08) {
           playSafe(video);
-          if (video.playbackRate !== 4.2) video.playbackRate = 4.2;
-          activeFrame = Math.max(1, Math.min(248, curTime * 30));
+          if (video.playbackRate !== 5.5) video.playbackRate = 5.5;
+          activeFrame = Math.max(1, Math.min(maxFrame, curTime * 30));
           activeVideo = video;
         } else {
           if (!rotationFinished) {
@@ -582,7 +604,7 @@ export default function ChromaHomographyRenderer({
               startVideoCrossfade(video);
             }
           }
-          activeFrame = 248;
+          activeFrame = maxFrame;
           if (videoLoop && !videoLoop.paused) videoLoop.pause();
 
           if (videoFrontLoop) {
@@ -607,16 +629,21 @@ export default function ChromaHomographyRenderer({
           crossfadeFromVideo.readyState >= 2 &&
           videoPrevTexRef.current
         ) {
-          gl.activeTexture(gl.TEXTURE1);
-          gl.bindTexture(gl.TEXTURE_2D, videoPrevTexRef.current);
-          gl.texImage2D(
-            gl.TEXTURE_2D,
-            0,
-            gl.RGBA,
-            gl.RGBA,
-            gl.UNSIGNED_BYTE,
-            crossfadeFromVideo
-          );
+          const crossfadeCurTime = crossfadeFromVideo.currentTime;
+          if (crossfadeFromVideo !== lastUploadedPrevVideo || crossfadeCurTime !== lastUploadedPrevVideoTime) {
+            gl.activeTexture(gl.TEXTURE1);
+            gl.bindTexture(gl.TEXTURE_2D, videoPrevTexRef.current);
+            gl.texImage2D(
+              gl.TEXTURE_2D,
+              0,
+              gl.RGBA,
+              gl.RGBA,
+              gl.UNSIGNED_BYTE,
+              crossfadeFromVideo
+            );
+            lastUploadedPrevVideo = crossfadeFromVideo;
+            lastUploadedPrevVideoTime = crossfadeCurTime;
+          }
         }
 
         if (t >= 1.0) {
@@ -627,16 +654,21 @@ export default function ChromaHomographyRenderer({
       }
 
       if (activeVideo && activeVideo.readyState >= 2 && videoTexRef.current) {
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, videoTexRef.current);
-        gl.texImage2D(
-          gl.TEXTURE_2D,
-          0,
-          gl.RGBA,
-          gl.RGBA,
-          gl.UNSIGNED_BYTE,
-          activeVideo
-        );
+        const activeCurTime = activeVideo.currentTime;
+        if (activeVideo !== lastUploadedVideo || activeCurTime !== lastUploadedVideoTime) {
+          gl.activeTexture(gl.TEXTURE0);
+          gl.bindTexture(gl.TEXTURE_2D, videoTexRef.current);
+          gl.texImage2D(
+            gl.TEXTURE_2D,
+            0,
+            gl.RGBA,
+            gl.RGBA,
+            gl.UNSIGNED_BYTE,
+            activeVideo
+          );
+          lastUploadedVideo = activeVideo;
+          lastUploadedVideoTime = activeCurTime;
+        }
       }
 
       gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
@@ -644,27 +676,33 @@ export default function ChromaHomographyRenderer({
       gl.clear(gl.COLOR_BUFFER_BIT);
 
       // 3. Render and Upload TRIA OS Dynamic Canvas (Unit 2)
+      // PERFORMANCE OPTIMIZATION: Only update the TriaCanvasEngine and upload the heavy 1080p canvas 
+      // to the GPU when the laptop is relatively static (is3DLock). During rapid rotation, 
+      // we freeze the canvas texture to save massive GPU bus bandwidth and CPU rendering time.
       const isShowingTriaOS =
+        isMobile || // For mobile, ALWAYS render TriaOS during boot because the video is a blank green screen!
         is3DLock ||
         isReversing ||
-        (isPortfolio && !rotationFinished && activeFrame < 120);
-      if (
-        isShowingTriaOS &&
-        triaEngineRef.current &&
-        triaCanvasRef.current &&
-        triaTexRef.current
-      ) {
-        triaEngineRef.current.updateAndRender(performance.now());
+        (isPortfolio && !rotationFinished && activeFrame < 120) ||
+        curTexSrc === "tria-os" ||
+        nextTexSrc === "tria-os";
+
+      if (isShowingTriaOS && triaTexRef.current) {
         gl.activeTexture(gl.TEXTURE2);
         gl.bindTexture(gl.TEXTURE_2D, triaTexRef.current);
-        gl.texImage2D(
-          gl.TEXTURE_2D,
-          0,
-          gl.RGBA,
-          gl.RGBA,
-          gl.UNSIGNED_BYTE,
-          triaCanvasRef.current
-        );
+        
+        // Always update and render if showing TRIA OS
+        if (isShowingTriaOS && triaEngineRef.current && triaCanvasRef.current) {
+          triaEngineRef.current.updateAndRender(now);
+          gl.texImage2D(
+            gl.TEXTURE_2D,
+            0,
+            gl.RGBA,
+            gl.RGBA,
+            gl.UNSIGNED_BYTE,
+            triaCanvasRef.current
+          );
+        }
       }
 
       // 4. Draw Background Quad with Perspective Homography (Units 2 & 3)
@@ -673,14 +711,28 @@ export default function ChromaHomographyRenderer({
       gl.enableVertexAttribArray(posLoc);
       gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
 
-      const corners = getInterpolatedCorners(activeFrame);
-      const hMatrix = getHomographyMatrix(corners);
+      const corners = isMobile ? getMobileInterpolatedCorners(activeFrame) : getInterpolatedCorners(activeFrame);
+      // Mobile fallback: full phone screen quad in 1080x1920 canvas space
+      const mobileFallbackCorners: [[number,number],[number,number],[number,number],[number,number]] = [
+        [230, 280], [850, 280], [850, 1640], [230, 1640]
+      ];
+      const hMatrix = getHomographyMatrix(
+        isMobile
+          ? (corners || mobileFallbackCorners)
+          : (corners || getInterpolatedCorners(1) as [[number,number],[number,number],[number,number],[number,number]])
+      );
+      if (isMobile && !corners) {
+        console.warn('[Mobile] getMobileInterpolatedCorners returned null for frame', activeFrame);
+      }
       gl.uniformMatrix3fv(
         gl.getUniformLocation(bgProg, "u_homography"),
         false,
         hMatrix
       );
-      gl.uniform2f(gl.getUniformLocation(bgProg, "u_resolution"), 1920, 1080);
+      const CANVAS_W = isMobile ? 1080 : 1920;
+      const CANVAS_H = isMobile ? 1920 : 1080;
+
+      gl.uniform2f(gl.getUniformLocation(bgProg, "u_resolution"), CANVAS_W, CANVAS_H);
 
       const t1Tex =
         textureCacheRef.current.get(curTexSrc) || fallbackTexRef.current;
@@ -735,14 +787,17 @@ export default function ChromaHomographyRenderer({
           }
         }
 
-        if (t1Tex) {
+        const tex1 = curTexSrc === "tria-os" ? triaTexRef.current : t1Tex;
+        const tex2 = nextTexSrc === "tria-os" ? triaTexRef.current : t2Tex;
+
+        if (tex1) {
           gl.activeTexture(gl.TEXTURE2);
-          gl.bindTexture(gl.TEXTURE_2D, t1Tex);
+          gl.bindTexture(gl.TEXTURE_2D, tex1);
           gl.uniform1i(gl.getUniformLocation(bgProg, "u_tex1"), 2);
 
-          if (t2Tex) {
+          if (tex2) {
             gl.activeTexture(gl.TEXTURE3);
-            gl.bindTexture(gl.TEXTURE_2D, t2Tex);
+            gl.bindTexture(gl.TEXTURE_2D, tex2);
             gl.uniform1i(gl.getUniformLocation(bgProg, "u_tex2"), 3);
           }
 
@@ -775,6 +830,15 @@ export default function ChromaHomographyRenderer({
           videoCrossfadeFactor
         );
 
+        const CANVAS_W = isMobile ? 1080 : 1920;
+        const CANVAS_H = isMobile ? 1920 : 1080;
+
+        gl.uniform2f(
+          gl.getUniformLocation(fgProg, "u_resolution"),
+          CANVAS_W,
+          CANVAS_H
+        );
+
         gl.drawArrays(gl.TRIANGLES, 0, 6);
       }
 
@@ -798,7 +862,13 @@ export default function ChromaHomographyRenderer({
         playsInline
         muted
         preload="auto"
-        onLoadedData={onVideoLoaded}
+        onCanPlayThrough={() => {
+          if (!videoSrcLoop) {
+            if (onVideoLoaded) onVideoLoaded();
+          } else if (videoLoopRef.current && videoLoopRef.current.readyState >= 3 && onVideoLoaded) {
+            onVideoLoaded();
+          }
+        }}
       />
       {videoSrcLoop && (
         <video
@@ -810,6 +880,11 @@ export default function ChromaHomographyRenderer({
           loop
           autoPlay
           preload="auto"
+          onCanPlayThrough={() => {
+            if (videoRef.current && videoRef.current.readyState >= 3 && onVideoLoaded) {
+              onVideoLoaded();
+            }
+          }}
           onEnded={(e) => {
             e.currentTarget.currentTime = 0;
             playSafe(e.currentTarget);
@@ -844,14 +919,14 @@ export default function ChromaHomographyRenderer({
       )}
             <canvas
         ref={canvasRef}
-        width={1920}
-        height={1080}
+        width={isMobile ? 1080 : 1920}
+        height={isMobile ? 1920 : 1080}
         style={{
           position: "absolute",
           left: 0,
-          top: "-70px",
+          top: isMobile ? 0 : "-70px",
           width: "100%",
-          height: "calc(100% + 140px)",
+          height: isMobile ? "100%" : "calc(100% + 140px)",
           objectFit: "cover",
           objectPosition: "center top",
         }}

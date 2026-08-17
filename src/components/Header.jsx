@@ -71,8 +71,51 @@ export default function Header() {
 
   // Prevent body scroll when menu open
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    if (menuOpen) {
+      document.body.style.overflow = "hidden";
+      document.body.style.touchAction = "none"; // robust lock for iOS Safari
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+    }
+    return () => { 
+      document.body.style.overflow = ""; 
+      document.body.style.touchAction = "";
+    };
+  }, [menuOpen]);
+
+  // Focus trap for mobile menu
+  useEffect(() => {
+    if (!menuOpen || !menuRef.current) return;
+    const focusableElements = menuRef.current.querySelectorAll(
+      'a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select'
+    );
+    if (!focusableElements.length) return;
+    
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    const handleTab = (e) => {
+      if (e.key === "Tab") {
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement) {
+            lastElement.focus();
+            e.preventDefault();
+          }
+        } else {
+          if (document.activeElement === lastElement) {
+            firstElement.focus();
+            e.preventDefault();
+          }
+        }
+      }
+    };
+    
+    window.addEventListener("keydown", handleTab);
+    // Auto-focus first element
+    setTimeout(() => firstElement.focus(), 100);
+    
+    return () => window.removeEventListener("keydown", handleTab);
   }, [menuOpen]);
 
   return (
@@ -81,10 +124,10 @@ export default function Header() {
         role="banner"
         className={`fixed top-0 left-0 right-0 z-[50] transition-all duration-700 ${
           scrolled || menuOpen
-            ? "bg-[var(--color-bg)] border-b border-[var(--color-border)]"
+            ? "bg-[var(--color-bg)]/90 backdrop-blur-md backdrop-filter border-b border-[var(--color-border)]"
             : "bg-transparent border-b border-transparent"
         }`}
-        style={{ transitionTimingFunction: "cubic-bezier(0.22,1,0.36,1)" }}
+        style={{ transitionTimingFunction: "cubic-bezier(0.22,1,0.36,1)", WebkitBackdropFilter: (scrolled || menuOpen) ? "blur(12px)" : "none" }}
       >
         <div className="container">
           <div className="flex items-center justify-between h-16 lg:h-[4.5rem]">
@@ -137,7 +180,7 @@ export default function Header() {
 
             {/* ── Mobile hamburger ── */}
             <button
-              className="md:hidden flex flex-col justify-center items-center gap-[5px] w-10 h-10 -mr-2"
+              className="md:hidden flex flex-col justify-center items-center gap-[5px] w-12 h-12 -mr-3"
               onClick={() => setMenuOpen((v) => !v)}
               aria-label={menuOpen ? "Close navigation menu" : "Open navigation menu"}
               aria-expanded={menuOpen}
@@ -179,9 +222,10 @@ export default function Header() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -12 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-0 z-[40] bg-[var(--color-bg)] flex flex-col pt-16 md:hidden"
+            className="fixed inset-0 z-[40] bg-[var(--color-bg)] flex flex-col pt-20 md:hidden h-[100dvh]"
+            aria-hidden={!menuOpen}
           >
-            <div className="container flex flex-col gap-1 pt-10">
+            <div className="container flex flex-col gap-1 pt-10 h-full overflow-y-auto pb-8">
               {navLinks.map((link, i) => (
                 <motion.a
                   key={link.label}

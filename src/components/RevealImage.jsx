@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 
-export default function RevealImage({ src, alt, className, style }) {
+export default function RevealImage({ src, alt, className, style, loading, srcSet, sizes, ...rest }) {
   const ref = useRef(null);
   const prefersReducedMotion = useReducedMotion();
   
@@ -20,9 +20,9 @@ export default function RevealImage({ src, alt, className, style }) {
 
   if (prefersReducedMotion) {
     if (isVideo) {
-      return <video src={src} className={className} style={style} autoPlay muted loop playsInline />;
+      return <video src={src} className={className} style={style} autoPlay muted loop playsInline {...rest} />;
     }
-    return <img src={src} alt={alt} className={className} style={style} />;
+    return <img src={src} alt={alt} className={className} style={style} loading={loading} srcSet={srcSet} sizes={sizes} {...rest} />;
   }
 
   const commonProps = {
@@ -41,9 +41,9 @@ export default function RevealImage({ src, alt, className, style }) {
     <div ref={ref} style={{ ...style, overflow: 'hidden', position: 'relative' }} className={className}>
       <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.05)' }} />
       {isVideo ? (
-        <motion.video {...commonProps} autoPlay muted loop playsInline />
+        <motion.video {...commonProps} autoPlay muted loop playsInline {...rest} />
       ) : (
-        <motion.img {...commonProps} alt={alt} />
+        <motion.img {...commonProps} alt={alt} loading={loading} srcSet={srcSet} sizes={sizes} {...rest} />
       )}
     </div>
   );

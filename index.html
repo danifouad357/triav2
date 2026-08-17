@@ -22,7 +22,11 @@
     <!-- Google Fonts: Playfair Display & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" media="print" onload="this.media='all'" />
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" />
+    </noscript>
     
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
@@ -42,8 +46,248 @@
       "description": "Independent web design and development studio building distinctive digital experiences for ambitious businesses."
     }
     </script>
+  
+    <style>
+      
+:root {
+  --tria-oled-black: #050505;
+  --tria-ok-green: #34d399;
+  --tria-cyan: #38bdf8;
+  --tria-spinner-size: 350px;
+  --tria-logo-size: 215px;
+}
+#tria-global-preloader {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--tria-oled-black);
+  z-index: 9999999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  user-select: none;
+  font-family: 'Inter', sans-serif;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+#tria-global-preloader.fade-out {
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(1.02);
+}
+/* STAGE 1: KERNEL */
+.tria-kernel-screen {
+  position: absolute;
+  inset: 0;
+  background-color: var(--tria-oled-black);
+  padding: 2.2rem 3.2rem;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Geist Mono', monospace;
+  font-size: 13.5px;
+  line-height: 1.58;
+  color: #d8d8e0;
+  z-index: 10;
+  transition: opacity 0.4s ease;
+}
+.tria-kernel-screen.hidden { opacity: 0; visibility: hidden; }
+.tria-kernel-header { color: #71717a; margin-bottom: 0.6rem; font-size: 13px; }
+.tria-kernel-header .bold { color: #ffffff; font-weight: 600; }
+.tria-terminal-log { display: flex; flex-direction: column; max-width: 1350px; }
+.tria-log-line { display: flex; align-items: baseline; white-space: pre; height: 21.5px; }
+.tria-timestamp { color: #5c5c66; margin-right: 1.1rem; flex-shrink: 0; }
+.tria-tag-ok { color: var(--tria-ok-green); font-weight: 600; margin-right: 0.85rem; }
+.tria-tag-info { color: var(--tria-cyan); font-weight: 500; margin-right: 0.85rem; }
+.tria-tag-sec { color: #a78bfa; font-weight: 500; margin-right: 0.85rem; }
+.tria-tag-blank { display: inline-block; width: 68px; }
+.tria-log-text { color: #e2e2e8; flex-grow: 1; overflow: hidden; text-overflow: ellipsis; }
+.tria-log-text.dim { color: #6e6e78; }
+.tria-log-text.highlight { color: #ffffff; font-weight: 600; }
+
+.tria-glitch-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%);
+  background-size: 100% 3px;
+  opacity: 0.25;
+}
+.tria-glitch-layer.active-twitch { animation: tria-glitch 0.09s linear infinite; }
+@keyframes tria-glitch {
+  0% { transform: translate(0, 0); filter: drop-shadow(1.5px 0 0 rgba(255, 30, 80, 0.45)) drop-shadow(-1.5px 0 0 rgba(0, 220, 255, 0.45)); }
+  33% { transform: translate(-1px, 1px); }
+  66% { transform: translate(1px, -1px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* STAGE 2: LOADING */
+.tria-loading-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+  transform: scale(0.99);
+}
+.tria-loading-screen.active { opacity: 1; visibility: visible; transform: scale(1); }
+.tria-center-stage { position: relative; display: flex; flex-direction: column; align-items: center; margin-top: -30px; }
+.tria-emblem-container { position: relative; width: var(--tria-spinner-size); height: var(--tria-spinner-size); display: flex; align-items: center; justify-content: center; }
+.tria-spinner-ring { position: absolute; inset: 0; border-radius: 50%; animation: tria-spin 2s linear infinite; }
+.tria-spinner-svg { width: 100%; height: 100%; overflow: visible; }
+.tria-spinner-track { fill: none; stroke: rgba(255, 255, 255, 0.14); stroke-width: 2.5; }
+.tria-spinner-arc { fill: none; stroke: url(#triaArcGradient); stroke-width: 3.2; stroke-linecap: round; filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.9)) drop-shadow(0 0 16px rgba(255, 255, 255, 0.45)); }
+@keyframes tria-spin { 100% { transform: rotate(360deg); } }
+.tria-logo-wrapper { position: relative; width: var(--tria-logo-size); height: var(--tria-logo-size); display: flex; align-items: center; justify-content: center; z-index: 2; }
+.tria-logo-img { width: 100%; height: auto; filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.32)); }
+.tria-ambient-aura { position: absolute; width: 380px; height: 380px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.025) 45%, transparent 70%); }
+.tria-status-text { margin-top: 3.4rem; font-size: 15px; color: #ededf2; text-shadow: 0 0 12px rgba(255, 255, 255, 0.22); }
+.tria-ready-badge { position: absolute; bottom: 2.4rem; font-family: 'Geist Mono', monospace; font-size: 11px; letter-spacing: 0.18em; color: #383842; transition: color 0.4s ease; opacity: 0.6; }
+.tria-ready-badge.active { color: var(--tria-ok-green); opacity: 1; text-shadow: 0 0 10px rgba(52, 211, 153, 0.4); }
+
+@media (max-width: 768px) {
+  .tria-kernel-screen { padding: 1.5rem; font-size: 12px; }
+  :root { --tria-spinner-size: 280px; --tria-logo-size: 170px; }
+}
+
+    </style>
   </head>
   <body>
+    
+<div id="tria-global-preloader">
+  <div class="tria-kernel-screen" id="triaKernelScreen">
+    <div class="tria-glitch-layer" id="triaGlitchLayer"></div>
+    <div class="tria-kernel-header"><span class="bold">TRIA Boot Loader v3.4.0</span> (x86_64-quantum-uefi) | Initializing Kernel Image...</div>
+    <div class="tria-terminal-log" id="triaTerminalLog"></div>
+  </div>
+  
+  <div class="tria-loading-screen" id="triaLoadingScreen">
+    <div class="tria-center-stage">
+      <div class="tria-emblem-container">
+        <div class="tria-ambient-aura"></div>
+        <div class="tria-spinner-ring">
+          <svg class="tria-spinner-svg" viewBox="0 0 350 350">
+            <defs>
+              <linearGradient id="triaArcGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
+                <stop offset="60%" stop-color="#ffffff" stop-opacity="0.8" />
+                <stop offset="100%" stop-color="#ffffff" stop-opacity="0.05" />
+              </linearGradient>
+            </defs>
+            <circle class="tria-spinner-track" cx="175" cy="175" r="162" />
+            <path class="tria-spinner-arc" d="M 175 13 A 162 162 0 0 1 337 175" />
+          </svg>
+        </div>
+        <div class="tria-logo-wrapper">
+          <img class="tria-logo-img" src="/logo.png" style="filter: brightness(0) invert(1);" alt="TRIA OS" />
+        </div>
+      </div>
+      <div class="tria-status-text" id="triaStatusText">Starting TRIA OS...</div>
+    </div>
+    <div class="tria-ready-badge" id="triaReadyBadge">SYSTEM ONLINE</div>
+  </div>
+</div>
+
+    
+<script>
+(function() {
+  const BOOT_LOG_SEQUENCE = [
+    { time: '0.000000', tag: 'OK', type: 'sec', text: 'ACPI: Early Power Management Controller v6.5 initialized' },
+    { time: '0.012410', tag: null, type: 'info', text: 'Power rails stabilized: VDD_CORE @ 1.150V, VDDQ_DDR @ 1.350V' },
+    { time: '0.038920', tag: 'OK', type: 'ok', text: 'CPU: TRIA Quantum-Silicon Core X16 @ 5.80GHz (16 Cores, 32 Threads)' },
+    { time: '0.082300', tag: 'OK', type: 'sec', text: 'UEFI 2.10 Secure Boot verified: SHA-384 / Ed25519 root certificate' },
+    { time: '0.120540', tag: 'OK', type: 'ok', text: 'Memory: DDR5-6400 MT/s ECC 65536 MB total usable memory' },
+    { time: '0.245100', tag: 'OK', type: 'ok', text: 'PCIe 5.0 Root Complex: 64 GT/s Bus Enumeration Complete' },
+    { time: '0.312800', tag: 'OK', type: 'ok', text: 'GPU: NVIDIA GeForce RTX 5070 (16384 MB GDDR7) DisplayPort 2.1 init' },
+    { time: '0.401200', tag: 'OK', type: 'ok', text: 'Storage: NVMe Gen5x4 2048GB [TRIA_PRO_SSD_2TB] Read: 7400MB/s' },
+    { time: '0.572100', tag: 'OK', type: 'ok', text: 'Net: Wi-Fi 7 (802.11be MLO) & 10GBASE-T Ethernet PHY link up' },
+    { time: '0.795000', tag: 'OK', type: 'sec', text: 'Memory Map: 4-level PML4 Page Tables mapped, IOMMU DMA protection ON' },
+    { time: '1.082000', tag: 'OK', type: 'ok', text: 'Kernel: Loading vmlinuz-tria-6.14.0-hardened into RAM...' },
+    { time: '1.240000', tag: 'OK', type: 'ok', text: 'Initramfs: Decompressing root filesystem image...' },
+    { time: '1.450000', tag: 'OK', type: 'sec', text: 'TRIA Microkernel v6.14.0-quantum online.' },
+    { time: '1.890000', tag: 'OK', type: 'sec', text: 'TPM: Hardware Cryptographic Co-Processor PCR-7 integrity PASSED' },
+    { time: '2.520000', tag: 'OK', type: 'ok', text: 'Compositor: Initializing Wayland / Vulkan DRM display server...' },
+    { time: '3.100000', tag: null, type: 'highlight', text: 'Kernel boot sequence complete.' },
+    { time: '3.350000', tag: null, type: 'info', text: 'Initialising User Interface...' },
+    { time: '3.650000', tag: null, type: 'highlight', text: 'TRIA OS LOGIN: █' }
+  ];
+
+  const logEl = document.getElementById('triaTerminalLog');
+  const kernel = document.getElementById('triaKernelScreen');
+  const loading = document.getElementById('triaLoadingScreen');
+  const glitch = document.getElementById('triaGlitchLayer');
+  
+  // High speed boot - finished in 0.8 seconds
+  const SPEED = 4.5;
+  const BASE_DUR = 3800 / SPEED;
+
+  let kernelFinished = false;
+  let appReady = false;
+
+  BOOT_LOG_SEQUENCE.forEach((item, index) => {
+    const delay = (parseFloat(item.time) / 3.8) * BASE_DUR;
+    setTimeout(() => {
+      const line = document.createElement('div');
+      line.className = 'tria-log-line';
+      let tagHtml = item.tag === 'OK' ? '<span class="tria-tag-ok">[  OK  ]</span>' : 
+                    item.tag === 'INFO' ? '<span class="tria-tag-info">[ INFO ]</span>' : 
+                    '<span class="tria-tag-blank"></span>';
+      
+      let textClass = 'tria-log-text ' + (item.type || '');
+      line.innerHTML = '<span class="tria-timestamp">[ ' + item.time.padStart(8, ' ') + ' ]</span>' + tagHtml + '<span class="' + textClass + '">' + item.text + '</span>';
+      
+      logEl.appendChild(line);
+      if (logEl.children.length > 20) logEl.removeChild(logEl.firstChild);
+      
+      if (index === 10 || index === 15) {
+        glitch.classList.add('active-twitch');
+        setTimeout(() => glitch.classList.remove('active-twitch'), 75);
+      }
+      
+      if (index === BOOT_LOG_SEQUENCE.length - 1) {
+        setTimeout(() => {
+          kernelFinished = true;
+          if (appReady) {
+            // App is already ready. Skip spinner and fade out immediately.
+            const preloader = document.getElementById('tria-global-preloader');
+            preloader.classList.add('fade-out');
+            setTimeout(() => { preloader.remove(); }, 850);
+          } else {
+            // App not ready yet. Show spinner.
+            kernel.classList.add('hidden');
+            loading.classList.add('active');
+          }
+        }, 150);
+      }
+    }, delay);
+  });
+
+  window.addEventListener('tria-app-ready', () => {
+    appReady = true;
+    if (kernelFinished) {
+      // App became ready AFTER kernel finished. Spinner is currently showing.
+      document.getElementById('triaReadyBadge').classList.add('active');
+      setTimeout(() => {
+        const preloader = document.getElementById('tria-global-preloader');
+        preloader?.classList.add('fade-out');
+        setTimeout(() => { preloader?.remove(); }, 850);
+      }, 400); // Hold for 400ms to show SYSTEM ONLINE
+    } else {
+      // Fast track removal if app loads before kernel finishes
+      const preloader = document.getElementById('tria-global-preloader');
+      preloader?.classList.add('fade-out');
+      setTimeout(() => { preloader?.remove(); }, 850);
+    }
+  });
+})();
+</script>
+
+  
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

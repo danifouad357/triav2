@@ -134,9 +134,10 @@ export default function Contact() {
                         name="name" 
                         required 
                         autoComplete="name"
+                        inputMode="text"
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full bg-transparent border-b border-[var(--color-ink-muted)] border-opacity-30 py-3 focus:outline-none focus:border-[var(--color-ink)] transition-colors text-lg"
+                        className="w-full bg-transparent border-b border-[var(--color-ink-muted)] border-opacity-30 py-3 focus:outline-none focus-visible:border-[var(--color-ink)] focus-visible:border-b-2 transition-colors text-base min-h-[44px]"
                         placeholder="Jane Doe"
                       />
                     </div>
@@ -148,9 +149,10 @@ export default function Contact() {
                         name="email" 
                         required 
                         autoComplete="email"
+                        inputMode="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className="w-full bg-transparent border-b border-[var(--color-ink-muted)] border-opacity-30 py-3 focus:outline-none focus:border-[var(--color-ink)] transition-colors text-lg"
+                        className="w-full bg-transparent border-b border-[var(--color-ink-muted)] border-opacity-30 py-3 focus:outline-none focus-visible:border-[var(--color-ink)] focus-visible:border-b-2 transition-colors text-base min-h-[44px]"
                         placeholder="jane@company.com"
                       />
                     </div>
@@ -164,7 +166,7 @@ export default function Contact() {
                         name="projectType" 
                         value={formData.projectType}
                         onChange={handleChange}
-                        className="w-full bg-transparent border-b border-[var(--color-ink-muted)] border-opacity-30 py-3 focus:outline-none focus:border-[var(--color-ink)] transition-colors text-lg appearance-none rounded-none"
+                        className="w-full bg-transparent border-b border-[var(--color-ink-muted)] border-opacity-30 py-3 focus:outline-none focus-visible:border-[var(--color-ink)] focus-visible:border-b-2 transition-colors text-base min-h-[44px] appearance-none rounded-none"
                       >
                         <option value="New Website">New Website</option>
                         <option value="Web App / Platform">Web App / Platform</option>
@@ -181,7 +183,7 @@ export default function Contact() {
                         name="budget"
                         value={formData.budget}
                         onChange={handleChange}
-                        className="w-full bg-transparent border-b border-[var(--color-ink-muted)] border-opacity-30 py-3 focus:outline-none focus:border-[var(--color-ink)] transition-colors text-lg appearance-none rounded-none"
+                        className="w-full bg-transparent border-b border-[var(--color-ink-muted)] border-opacity-30 py-3 focus:outline-none focus-visible:border-[var(--color-ink)] focus-visible:border-b-2 transition-colors text-base min-h-[44px] appearance-none rounded-none"
                       >
                         <option value="">Select a range...</option>
                         <option value="15000-25000">15,000 - 25,000 AED</option>
@@ -201,23 +203,25 @@ export default function Contact() {
                       rows="5"
                       value={formData.details}
                       onChange={handleChange}
-                      className="w-full bg-transparent border-b border-[var(--color-ink-muted)] border-opacity-30 py-3 focus:outline-none focus:border-[var(--color-ink)] transition-colors text-lg resize-none"
+                      className="w-full bg-transparent border-b border-[var(--color-ink-muted)] border-opacity-30 py-3 focus:outline-none focus-visible:border-[var(--color-ink)] focus-visible:border-b-2 transition-colors text-base min-h-[44px] resize-none"
                       placeholder="Tell us about your business, your goals for this project, and any current roadblocks..."
                     ></textarea>
                   </div>
 
                   {status === 'error' && (
-                    <div className="text-[#FF5F56] text-sm bg-[#FF5F56]/10 p-4 border border-[#FF5F56]/20">
+                    <div role="alert" aria-live="polite" className="text-[#FF5F56] text-sm bg-[#FF5F56]/10 p-4 border border-[#FF5F56]/20">
                       {errorMessage}
                     </div>
                   )}
 
-                  <div className="pt-2">
-                    <Turnstile 
-                      siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY || '1x00000000000000000000AA'}
-                      onSuccess={(token) => setTurnstileToken(token)}
-                      options={{ theme: 'light' }}
-                    />
+                  <div className="pt-2 overflow-hidden">
+                    <div className="transform origin-left scale-[0.85] sm:scale-100">
+                      <Turnstile 
+                        siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY || '1x00000000000000000000AA'}
+                        onSuccess={(token) => setTurnstileToken(token)}
+                        options={{ theme: 'light' }}
+                      />
+                    </div>
                   </div>
 
                   <div className="pt-4">

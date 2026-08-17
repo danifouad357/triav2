@@ -8,17 +8,9 @@ export default function Hero() {
       {/* Clients Banner */}
       <section id="ambitious-businesses" className="section" style={{ padding: '0', marginBottom: 'var(--space-xl)' }}>
         <div className="container">
-          <div style={{ 
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            borderBottom: '1px solid var(--color-border)',
-            padding: 'var(--space-sm) 0',
-            flexWrap: 'wrap',
-            gap: 'var(--space-md)'
-          }}>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-[var(--color-border)] py-4 gap-4">
             <span className="text-small">BUILT FOR AMBITIOUS BUSINESSES</span>
-            <div style={{ display: 'flex', gap: 'var(--space-md)', color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>
+            <div className="flex flex-wrap gap-4 text-[var(--color-text-muted)] text-sm">
               <span>Hospitality</span>
               <span>Healthcare</span>
               <span>Professional services</span>
