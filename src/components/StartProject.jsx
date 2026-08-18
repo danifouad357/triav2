@@ -32,12 +32,26 @@ export default function StartProject() {
             <p style={{ color: 'rgba(255,255,255,0.8)', marginBottom: 'var(--space-lg)', fontSize: '1.1rem', maxWidth: '500px' }}>
               Tell us what you're building and we'll explore how to bring it to life with the right level of design, development, and support.
             </p>
-            <a href="mailto:hello@triadesign.studio" style={{ color: 'var(--color-white)', textDecoration: 'underline', textUnderlineOffset: '4px' }}>
-              hello@triadesign.studio
-            </a>
-            <span style={{ display: 'block', marginTop: 'var(--space-sm)', fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)' }}>
-              Replies within <CountUp to={24} suffix=" hours" />.
-            </span>
+            <div className="flex flex-col gap-6">
+              <div>
+                <a href="mailto:hello@triadesign.studio" style={{ color: 'var(--color-white)', textDecoration: 'underline', textUnderlineOffset: '4px' }}>
+                  hello@triadesign.studio
+                </a>
+                <span style={{ display: 'block', marginTop: 'var(--space-sm)', fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)' }}>
+                  Replies within <CountUp to={24} suffix=" hours" />.
+                </span>
+              </div>
+              
+              <div className="pt-6 mt-6 border-t border-[rgba(255,255,255,0.1)]">
+                <h4 className="text-sm font-serif text-white mb-2">Not ready for a full build?</h4>
+                <p className="text-sm text-[rgba(255,255,255,0.6)] mb-3 max-w-md">
+                  We offer <strong>free design audits</strong> for existing websites. We'll identify UX friction points, accessibility gaps, and opportunities for conversion optimization.
+                </p>
+                <Link to="/contact?package=Audit" className="text-xs uppercase tracking-widest font-semibold text-[var(--color-brass-deep)] hover:text-white transition-colors flex items-center gap-2">
+                  Book your free audit <ArrowRight size={14} />
+                </Link>
+              </div>
+            </div>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: 'var(--space-xl)' }}>

@@ -190,6 +190,31 @@ export default function Pricing() {
               </div>
             </div>
           </div>
+        {/* Free Audit Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+          className="border-t border-[var(--color-hair-cream)] pt-20 mt-20"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-center bg-white p-8 md:p-12 border border-[var(--color-hair-cream)]">
+            <div className="md:col-span-8">
+              <span className="cs-system-font text-[var(--color-brass-deep)] mb-4 block">NOT READY FOR A FULL BUILD?</span>
+              <h3 className="text-3xl font-serif text-[var(--color-ink)] mb-4">Book Your Free Design Audit</h3>
+              <p className="text-[var(--color-ink-muted)] text-sm leading-relaxed max-w-2xl">
+                We offer free, no-obligation design and performance audits for your existing website. We'll identify UX friction points, accessibility gaps, and opportunities for conversion optimization.
+              </p>
+            </div>
+            <div className="md:col-span-4 flex justify-start md:justify-end">
+              <Link 
+                to="/contact?package=Audit"
+                className="px-8 py-4 bg-[var(--color-ink)] text-white hover:bg-[var(--color-brass-deep)] transition-colors uppercase tracking-widest text-xs font-semibold flex items-center gap-2 whitespace-nowrap"
+              >
+                Book Free Audit <ArrowRight size={14} />
+              </Link>
+            </div>
+          </div>
         </motion.div>
 
       </div>

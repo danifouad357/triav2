@@ -177,20 +177,22 @@ export default function Contact() {
                       </select>
                     </div>
                     <div className="space-y-2">
-                      <label htmlFor="budget" className="text-xs uppercase tracking-widest text-[var(--color-ink-muted)] font-semibold">Budget Range</label>
+                      <label htmlFor="budget" className="text-xs uppercase tracking-widest text-[var(--color-ink-muted)] font-semibold">Budget Range (AED) *</label>
                       <select 
                         id="budget" 
                         name="budget"
+                        required
                         value={formData.budget}
                         onChange={handleChange}
                         className="w-full bg-transparent border-b border-[var(--color-ink-muted)] border-opacity-30 py-3 focus:outline-none focus-visible:border-[var(--color-ink)] focus-visible:border-b-2 transition-colors text-base min-h-[44px] appearance-none rounded-none"
                       >
                         <option value="">Select a range...</option>
-                        <option value="15000-25000">15,000 - 25,000 AED</option>
-                        <option value="25000-45000">25,000 - 45,000 AED</option>
-                        <option value="45000+">45,000+ AED</option>
+                        <option value="1-3k">1 - 3k AED</option>
+                        <option value="4-8k">4 - 8k AED</option>
+                        <option value="10k+">10k+ AED</option>
                         <option value="Undecided">Undecided</option>
                       </select>
+                      <p className="text-[10px] text-red-500 mt-1">For testing only. If seen, report to site owner.</p>
                     </div>
                   </div>
 
@@ -262,10 +264,10 @@ export default function Contact() {
               <div className="p-6 bg-[#F3F0EC] border border-[var(--color-hair-cream)]">
                 <h4 className="text-sm font-serif text-[var(--color-ink)] mb-2">Not ready for a full build?</h4>
                 <p className="text-sm text-[var(--color-ink-muted)] mb-4">
-                  We also offer design audits and strategic consultation for existing platforms.
+                  We also offer free design audits and strategic consultation for existing platforms.
                 </p>
-                <a href="mailto:hello@triadesign.studio?subject=Design%20Audit%20Inquiry" className="text-xs uppercase tracking-widest font-semibold text-[var(--color-brass-deep)] hover:text-[var(--color-ink)] transition-colors">
-                  Inquire about audits &rarr;
+                <a href="mailto:hello@triadesign.studio?subject=Free%20Design%20Audit%20Inquiry" className="text-xs uppercase tracking-widest font-semibold text-[var(--color-brass-deep)] hover:text-[var(--color-ink)] transition-colors">
+                  Book your free audit &rarr;
                 </a>
               </div>
             </div>
