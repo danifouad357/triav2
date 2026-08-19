@@ -25,25 +25,9 @@ const staticRoutes = [
   { path: '/web-design-for-clinics/', component: 'src/pages/seo/WebDesignClinics.jsx', priority: 0.7, changefreq: 'monthly' }
 ];
 
-function getFileLastMod(filePath) {
-  try {
-    const absolutePath = path.resolve(__dirname, '..', filePath);
-    const stats = fs.statSync(absolutePath);
-    // Format to YYYY-MM-DD for sitemap
-    return stats.mtime.toISOString().split('T')[0];
-  } catch (error) {
-    console.warn(`Could not find stats for ${filePath}, falling back to current date.`);
-    return new Date().toISOString().split('T')[0];
-  }
-}
 
-function generateXMLUrl(loc, lastmod, changefreq, priority) {
-  return `  <url>
-    <loc>${DOMAIN}${loc}</loc>
-    <lastmod>${lastmod}</lastmod>
-    <changefreq>${changefreq}</changefreq>
-    <priority>${priority.toFixed(1)}</priority>
-  </url>`;
+function generateXMLUrl(loc) {
+  return `  <url>\n    <loc>${DOMAIN}${loc}</loc>\n  </url>`;
 }
 
 async function buildSitemap() {
@@ -52,19 +36,13 @@ async function buildSitemap() {
 
   // 1. Process Static Routes
   for (const route of staticRoutes) {
-    const lastmod = getFileLastMod(route.component);
-    xml += generateXMLUrl(route.path, lastmod, route.changefreq, route.priority) + '\n';
+    xml += generateXMLUrl(route.path) + '\n';
   }
 
   // 2. Process Dynamic Project Routes
-  const projectTemplatePath = 'src/pages/ProjectSingle.jsx';
-  const projectLastMod = getFileLastMod(projectTemplatePath);
-  
   for (const project of projects) {
-    // Add trailing slash for consistency
     const loc = `/work/${project.slug}/`;
-    // Using moderate priority for case studies as per instructions
-    xml += generateXMLUrl(loc, projectLastMod, 'monthly', 0.6) + '\n';
+    xml += generateXMLUrl(loc) + '\n';
   }
 
   xml += `</urlset>\n`;
