@@ -53,11 +53,13 @@ export async function onRequestPost(context) {
     }
 
     // 4. Send via Resend (Requires RESEND_API_KEY in environment variables)
-    if (env.RESEND_API_KEY) {
+    const RESEND_KEY = env.RESEND_API_KEY;
+    
+    if (RESEND_KEY) {
       const resendResponse = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${env.RESEND_API_KEY}`,
+          'Authorization': `Bearer ${RESEND_KEY}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({

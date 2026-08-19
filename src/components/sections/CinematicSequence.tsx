@@ -26,15 +26,15 @@ const lockMessages: TriaLockMessage[] = [
 ];
 
 const frontTextures = [
-  "/images/hero-screens/section-1.jpeg",
-  "/images/hero-screens/section-2.jpeg",
-  "/images/hero-screens/section-3.jpeg",
+  "/images/hero-screens/section-1.webp",
+  "/images/hero-screens/section-2.webp",
+  "/images/hero-screens/section-3.webp",
 ];
 
 const mobileFrontTextures = [
-  "/images/hero-screens/mobile-1.jpeg",
-  "/images/hero-screens/mobile-2.jpeg",
-  "/images/hero-screens/mobile-3.jpeg",
+  "/images/hero-screens/mobile-1.webp",
+  "/images/hero-screens/mobile-2.webp",
+  "/images/hero-screens/mobile-3.webp",
 ];
 
 // ─── DEV CONFIG ───────────────────────────────────────────────────────────────
@@ -357,36 +357,37 @@ export default function CinematicSequence({ isPaused = false }: { isPaused?: boo
         />
       </motion.div>
 
-      <AnimatePresence mode="wait">
-        {scene <= 1 && (
-           <motion.div key={`title-${scene}`} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="absolute inset-0 z-10 flex pointer-events-none">
-             <div className={`w-full flex ${isMobile ? "items-end justify-center pb-12 px-6" : "items-center container"}`}>
-               <div className={`max-w-xl ${isMobile ? "p-6 rounded-[20px] bg-[#F7F5F2]/80 backdrop-blur-xl shadow-2xl border border-white/40 text-center" : ""}`}>
-                 <span className={`font-mono text-[0.72rem] tracking-[0.15em] uppercase font-medium mb-4 block ${isMobile ? "text-[var(--color-brass-deep)]" : "text-[var(--color-brass-deep)]"}`}>
-                    {scene === 0 ? "SYS_INIT // BOOT LOADER" : "SYS_READY // IDENTITY VERIFIED"}
-                  </span>
-                  <h1 className={`font-sans font-[800] tracking-[-0.02em] leading-[1.08] mb-6 max-w-[15ch] text-[var(--color-ink)] ${isMobile ? "text-4xl mx-auto" : "text-display-2xl"}`}>
-                    {scene === 0 ? (
-                      <>
-                        We build fast, <em className="font-serif italic font-medium text-[var(--color-brass-deep)] text-[0.98em]">purposeful</em> websites.
-                      </>
-                    ) : (
-                      <>
-                        We build their <em className="font-serif italic font-medium text-[var(--color-brass-deep)] text-[0.98em]">best</em> salesperson.
-                      </>
-                    )}
-                  </h1>
-                  <p className={`text-[1.08rem] leading-[1.6] text-[var(--color-ink-muted)] mb-14 ${isMobile ? "max-w-xs mx-auto" : "max-w-[42ch]"}`}>
-                    Lean builds and deliberate decisions — nothing recycled, nothing extra.
-                  </p>
-                  <div className="font-mono text-[0.68rem] tracking-[0.18em] uppercase text-[var(--color-cream-muted)] border-t border-[var(--color-hair-cream)] pt-4 inline-block">
-                    SCROLL TO AUTHENTICATE
-                  </div>
-               </div>
-             </div>
-           </motion.div>
-        )}
-      </AnimatePresence>
+      <div className="absolute inset-0 z-10 flex pointer-events-none">
+         <motion.div 
+           initial={{ opacity: 0, y: 18 }} 
+           animate={{ opacity: scene <= 1 ? 1 : 0, y: scene <= 1 ? 0 : -12 }} 
+           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+           className={`w-full flex ${isMobile ? "items-end justify-center pb-12 px-6" : "items-center container"}`}
+         >
+           <div className={`max-w-xl ${isMobile ? "p-6 rounded-[20px] bg-[#F7F5F2]/80 backdrop-blur-xl shadow-2xl border border-white/40 text-center" : ""}`}>
+             <span className={`font-mono text-[0.72rem] tracking-[0.15em] uppercase font-medium mb-4 block text-[var(--color-brass-deep)]`}>
+                {scene === 0 ? "SYS_INIT // BOOT LOADER" : "SYS_READY // IDENTITY VERIFIED"}
+              </span>
+              <h1 className={`font-sans font-[800] tracking-[-0.02em] leading-[1.08] mb-6 max-w-[15ch] text-[var(--color-ink)] ${isMobile ? "text-4xl mx-auto" : "text-display-2xl"}`}>
+                {scene === 0 ? (
+                  <>
+                    We build fast, <em className="font-serif italic font-medium text-[var(--color-brass-deep)] text-[0.98em]">purposeful</em> websites.
+                  </>
+                ) : (
+                  <>
+                    We build their <em className="font-serif italic font-medium text-[var(--color-brass-deep)] text-[0.98em]">best</em> salesperson.
+                  </>
+                )}
+              </h1>
+              <p className={`text-[1.08rem] leading-[1.6] text-[var(--color-ink-muted)] mb-14 ${isMobile ? "max-w-xs mx-auto" : "max-w-[42ch]"}`}>
+                Lean builds and deliberate decisions — nothing recycled, nothing extra.
+              </p>
+              <div className="font-mono text-[0.68rem] tracking-[0.18em] uppercase text-[var(--color-cream-muted)] border-t border-[var(--color-hair-cream)] pt-4 inline-block">
+                SCROLL TO AUTHENTICATE
+              </div>
+           </div>
+         </motion.div>
+      </div>
       
       <AnimatePresence mode="wait">
         {(scene >= 2 && scene <= 4) && (

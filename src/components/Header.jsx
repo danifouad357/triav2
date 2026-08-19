@@ -139,7 +139,7 @@ export default function Header() {
               aria-label="Tria Design — Home"
             >
               <img 
-                src="/logo.png" 
+                src="/logo.webp" 
                 alt="Tria Design Logo" 
                 className="h-8 w-auto"
                 style={{ mixBlendMode: 'multiply' }}

@@ -482,6 +482,7 @@ export default function ChromaHomographyRenderer({
     let lastUploadedVideoTime = -1;
     let lastUploadedPrevVideo: HTMLVideoElement | null = null;
     let lastUploadedPrevVideoTime = -1;
+    let lastTriaUpdate = 0;
 
     const startVideoCrossfade = (fromVid: HTMLVideoElement | null) => {
       crossfadeFromVideo = fromVid;
@@ -691,17 +692,24 @@ export default function ChromaHomographyRenderer({
         gl.activeTexture(gl.TEXTURE2);
         gl.bindTexture(gl.TEXTURE_2D, triaTexRef.current);
         
-        // Always update and render if showing TRIA OS
+        // Always update and render if showing TRIA OS, but throttle heavily if resting on the lock screen
         if (isShowingTriaOS && triaEngineRef.current && triaCanvasRef.current) {
-          triaEngineRef.current.updateAndRender(now);
-          gl.texImage2D(
-            gl.TEXTURE_2D,
-            0,
-            gl.RGBA,
-            gl.RGBA,
-            gl.UNSIGNED_BYTE,
-            triaCanvasRef.current
-          );
+          const engine = triaEngineRef.current;
+          const isLockIdle = engine.stage === 'lock' && (now - engine.stageStartTime > 1000);
+          
+          // Render at 60fps during boot/transitions, but throttle to 2fps when resting to eliminate 15.9s TBT
+          if (!isLockIdle || (now - lastTriaUpdate > 500)) {
+            triaEngineRef.current.updateAndRender(now);
+            gl.texImage2D(
+              gl.TEXTURE_2D,
+              0,
+              gl.RGBA,
+              gl.RGBA,
+              gl.UNSIGNED_BYTE,
+              triaCanvasRef.current
+            );
+            lastTriaUpdate = now;
+          }
         }
       }
 
@@ -861,6 +869,7 @@ export default function ChromaHomographyRenderer({
         style={{ display: "none" }}
         playsInline
         muted
+        aria-hidden="true"
         preload="auto"
         onCanPlayThrough={() => {
           if (!videoSrcLoop) {
@@ -877,6 +886,7 @@ export default function ChromaHomographyRenderer({
           style={{ display: "none" }}
           playsInline
           muted
+          aria-hidden="true"
           loop
           autoPlay
           preload="auto"
@@ -898,9 +908,10 @@ export default function ChromaHomographyRenderer({
           style={{ display: "none" }}
           playsInline
           muted
+          aria-hidden="true"
           loop
           autoPlay
-          preload="auto"
+          preload="metadata"
           onEnded={(e) => {
             e.currentTarget.currentTime = 0;
             playSafe(e.currentTarget);
@@ -914,13 +925,16 @@ export default function ChromaHomographyRenderer({
           style={{ display: "none" }}
           playsInline
           muted
-          preload="auto"
+          aria-hidden="true"
+          preload="metadata"
         />
       )}
-            <canvas
+      <canvas
         ref={canvasRef}
         width={isMobile ? 1080 : 1920}
         height={isMobile ? 1920 : 1080}
+        role="img"
+        aria-label="3D cinematic product showcase"
         style={{
           position: "absolute",
           left: 0,

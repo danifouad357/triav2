@@ -7,7 +7,7 @@ export default function MobileHero() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0 w-full h-full">
         <img 
-          src="/images/mobile-hero-bg.jpg" 
+          src="/images/mobile-hero-bg.webp" 
           alt="Tria Design Hero" 
           className="w-full h-full object-cover object-center"
           onLoad={() => window.dispatchEvent(new Event('tria-app-ready'))}
