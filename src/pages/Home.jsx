@@ -24,8 +24,9 @@ export default function Home() {
   }, []);
 
   useSEO({
-    title: 'Independent Web Design & Development Studio',
-    description: 'Tria Design builds distinctive digital experiences for ambitious businesses. Custom web design, development, and strategic execution.'
+    title: 'Web Design Agency Abu Dhabi | TRIA Design Studio',
+    description: 'TRIA Design is a premium web design and development studio in Abu Dhabi creating high-performance websites for businesses across the UAE.',
+    primaryKeyword: 'web design agency Abu Dhabi'
   });
 
   return (

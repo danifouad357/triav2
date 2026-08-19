@@ -17,6 +17,13 @@ const Terms = lazy(() => import('@/pages/Terms'));
 const About = lazy(() => import('@/pages/About'));
 const NotFound = lazy(() => import('@/pages/NotFound'));
 
+// SEO Pages
+const WebDesignAbuDhabi = lazy(() => import('@/pages/seo/WebDesignAbuDhabi'));
+const WebDevelopmentAbuDhabi = lazy(() => import('@/pages/seo/WebDevelopmentAbuDhabi'));
+const WebsiteDesignUAE = lazy(() => import('@/pages/seo/WebsiteDesignUAE'));
+const WebDesignRestaurants = lazy(() => import('@/pages/seo/WebDesignRestaurants'));
+const WebDesignClinics = lazy(() => import('@/pages/seo/WebDesignClinics'));
+
 import './index.css';
 
 const isTouchDevice = typeof window !== 'undefined' ? window.matchMedia('(pointer: coarse)').matches : false;
@@ -38,6 +45,14 @@ function App() {
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
+          
+          {/* SEO Routes */}
+          <Route path="/web-design-abu-dhabi" element={<WebDesignAbuDhabi />} />
+          <Route path="/web-development-abu-dhabi" element={<WebDevelopmentAbuDhabi />} />
+          <Route path="/website-design-uae" element={<WebsiteDesignUAE />} />
+          <Route path="/web-design-for-restaurants" element={<WebDesignRestaurants />} />
+          <Route path="/web-design-for-clinics" element={<WebDesignClinics />} />
+          
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

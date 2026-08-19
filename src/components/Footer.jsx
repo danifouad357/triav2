@@ -5,7 +5,7 @@ export default function Footer() {
     <footer style={{ backgroundColor: '#111111', color: 'var(--color-white)', padding: 'var(--space-xl) 0 var(--space-lg)' }}>
       <div className="container">
         
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-16">
           <div className="md:col-span-2">
             <div style={{ fontWeight: 600, letterSpacing: '0.05em', marginBottom: '1rem' }}>TRIA DESIGN</div>
             <p className="text-sm" style={{ color: 'rgba(255,255,255,0.7)', maxWidth: '300px' }}>
@@ -24,6 +24,17 @@ export default function Footer() {
             </ul>
           </div>
           
+          <div>
+            <h4 className="text-xs uppercase tracking-widest font-semibold mb-6" style={{ color: 'rgba(255,255,255,0.6)' }}>Expertise</h4>
+            <ul className="space-y-3">
+              <li><Link to="/web-design-abu-dhabi" className="text-sm text-[rgba(255,255,255,0.7)] hover:text-[rgba(255,255,255,0.95)] transition-colors min-h-[44px] flex items-center">Web Design Abu Dhabi</Link></li>
+              <li><Link to="/web-development-abu-dhabi" className="text-sm text-[rgba(255,255,255,0.7)] hover:text-[rgba(255,255,255,0.95)] transition-colors min-h-[44px] flex items-center">Web Development Abu Dhabi</Link></li>
+              <li><Link to="/website-design-uae" className="text-sm text-[rgba(255,255,255,0.7)] hover:text-[rgba(255,255,255,0.95)] transition-colors min-h-[44px] flex items-center">Website Design UAE</Link></li>
+              <li><Link to="/web-design-for-restaurants" className="text-sm text-[rgba(255,255,255,0.7)] hover:text-[rgba(255,255,255,0.95)] transition-colors min-h-[44px] flex items-center">Restaurants & Cafes</Link></li>
+              <li><Link to="/web-design-for-clinics" className="text-sm text-[rgba(255,255,255,0.7)] hover:text-[rgba(255,255,255,0.95)] transition-colors min-h-[44px] flex items-center">Clinics & Healthcare</Link></li>
+            </ul>
+          </div>
+
           <div>
             <h4 className="text-xs uppercase tracking-widest font-semibold mb-6" style={{ color: 'rgba(255,255,255,0.6)' }}>Legal</h4>
             <ul className="space-y-3">
