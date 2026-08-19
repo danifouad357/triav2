@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://triadesign.studio/sitemap.xml
+Sitemap: https://triadesign.pages.dev/sitemap.xml

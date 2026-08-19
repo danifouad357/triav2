@@ -95,7 +95,7 @@ export class TriaCanvasEngine {
   
   // Vector Artwork & Assets
   logoImage: HTMLImageElement | null = null;
-  lockFieldSvgImage: HTMLImageElement | null = null;
+  lockFieldSvgImage: HTMLImageElement | HTMLCanvasElement | null = null;
   svgLoaded: boolean = false;
   
   // Kernel state
@@ -239,7 +239,16 @@ export class TriaCanvasEngine {
     const img = new Image();
     img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgData.trim());
     img.onload = () => {
-      this.lockFieldSvgImage = img;
+      const offscreen = document.createElement('canvas');
+      offscreen.width = 1920;
+      offscreen.height = 1080;
+      const offCtx = offscreen.getContext('2d');
+      if (offCtx) {
+        offCtx.drawImage(img, 0, 0, 1920, 1080);
+        this.lockFieldSvgImage = offscreen;
+      } else {
+        this.lockFieldSvgImage = img; // Fallback
+      }
       this.svgLoaded = true;
     };
   }

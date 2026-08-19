@@ -888,7 +888,6 @@ export default function ChromaHomographyRenderer({
           muted
           aria-hidden="true"
           loop
-          autoPlay
           preload="auto"
           onCanPlayThrough={() => {
             if (videoRef.current && videoRef.current.readyState >= 3 && onVideoLoaded) {
@@ -910,7 +909,6 @@ export default function ChromaHomographyRenderer({
           muted
           aria-hidden="true"
           loop
-          autoPlay
           preload="metadata"
           onEnded={(e) => {
             e.currentTarget.currentTime = 0;
