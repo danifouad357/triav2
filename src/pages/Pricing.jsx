@@ -190,6 +190,8 @@ export default function Pricing() {
               </div>
             </div>
           </div>
+        </motion.div>
+
         {/* Free Audit Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

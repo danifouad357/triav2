@@ -12,7 +12,7 @@ export default function Contact() {
     title: 'Contact',
     description: 'Tell us what you are building and we will explore how to bring it to life.'
   });
-  
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -21,7 +21,7 @@ export default function Contact() {
     details: '',
     honeypot: ''
   });
-  
+
   const [status, setStatus] = useState('idle'); // idle, submitting, success, error
   const [errorMessage, setErrorMessage] = useState('');
   const [turnstileToken, setTurnstileToken] = useState('');
@@ -38,8 +38,16 @@ export default function Contact() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (siteKey && !turnstileToken) {
+      setStatus('error');
+      setErrorMessage('Please complete the security check.');
+      return;
+    }
+
     setStatus('submitting');
     setErrorMessage('');
 
@@ -94,7 +102,7 @@ export default function Contact() {
           <div className="md:col-span-8">
             <AnimatePresence mode="wait">
               {status === 'success' ? (
-                <motion.div 
+                <motion.div
                   key="success"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -104,15 +112,15 @@ export default function Contact() {
                   <p className="text-[var(--color-ink-muted)] font-sans">
                     Thank you for reaching out. We have received your inquiry and will be in touch shortly to discuss the next steps.
                   </p>
-                  <button 
-                    onClick={() => { setStatus('idle'); setFormData({...formData, details: ''}) }}
+                  <button
+                    onClick={() => { setStatus('idle'); setFormData({ ...formData, details: '' }) }}
                     className="mt-8 px-6 py-3 border border-[var(--color-brass-deep)] text-[var(--color-brass-deep)] hover:bg-[var(--color-brass-deep)] hover:text-white transition-colors text-sm uppercase tracking-wider font-medium"
                   >
                     Send another message
                   </button>
                 </motion.div>
               ) : (
-                <motion.form 
+                <motion.form
                   key="form"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -128,11 +136,11 @@ export default function Contact() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-2">
                       <label htmlFor="name" className="text-xs uppercase tracking-widest text-[var(--color-ink-muted)] font-semibold">Full Name *</label>
-                      <input 
-                        type="text" 
-                        id="name" 
-                        name="name" 
-                        required 
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        required
                         autoComplete="name"
                         inputMode="text"
                         value={formData.name}
@@ -143,11 +151,11 @@ export default function Contact() {
                     </div>
                     <div className="space-y-2">
                       <label htmlFor="email" className="text-xs uppercase tracking-widest text-[var(--color-ink-muted)] font-semibold">Email Address *</label>
-                      <input 
-                        type="email" 
-                        id="email" 
-                        name="email" 
-                        required 
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        required
                         autoComplete="email"
                         inputMode="email"
                         value={formData.email}
@@ -161,9 +169,9 @@ export default function Contact() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-2">
                       <label htmlFor="projectType" className="text-xs uppercase tracking-widest text-[var(--color-ink-muted)] font-semibold">Interest</label>
-                      <select 
-                        id="projectType" 
-                        name="projectType" 
+                      <select
+                        id="projectType"
+                        name="projectType"
                         value={formData.projectType}
                         onChange={handleChange}
                         className="w-full bg-transparent border-b border-[var(--color-ink-muted)] border-opacity-30 py-3 focus:outline-none focus-visible:border-[var(--color-ink)] focus-visible:border-b-2 transition-colors text-base min-h-[44px] appearance-none rounded-none"
@@ -178,8 +186,8 @@ export default function Contact() {
                     </div>
                     <div className="space-y-2">
                       <label htmlFor="budget" className="text-xs uppercase tracking-widest text-[var(--color-ink-muted)] font-semibold">Budget Range (AED) *</label>
-                      <select 
-                        id="budget" 
+                      <select
+                        id="budget"
                         name="budget"
                         required
                         value={formData.budget}
@@ -192,16 +200,16 @@ export default function Contact() {
                         <option value="10k+">10k+ AED</option>
                         <option value="Undecided">Undecided</option>
                       </select>
-                      <p className="text-[10px] text-red-500 mt-1">For testing only. If seen, report to site owner.</p>
+                      <p className="text-[10px] text-red-500 mt-1"> </p>
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <label htmlFor="details" className="text-xs uppercase tracking-widest text-[var(--color-ink-muted)] font-semibold">Project Details *</label>
-                    <textarea 
-                      id="details" 
-                      name="details" 
-                      required 
+                    <textarea
+                      id="details"
+                      name="details"
+                      required
                       rows="5"
                       value={formData.details}
                       onChange={handleChange}
@@ -216,20 +224,22 @@ export default function Contact() {
                     </div>
                   )}
 
-                  <div className="pt-2 overflow-hidden">
-                    <div className="transform origin-left scale-[0.85] sm:scale-100">
-                      <Turnstile 
-                        siteKey={import.meta.env.VITE_TURNSTILE_SITE_KEY || '1x00000000000000000000AA'}
-                        onSuccess={(token) => setTurnstileToken(token)}
-                        options={{ theme: 'light' }}
-                      />
+                  {siteKey && (
+                    <div className="pt-2 overflow-hidden">
+                      <div className="transform origin-left scale-[0.85] sm:scale-100">
+                        <Turnstile
+                          siteKey={siteKey}
+                          onSuccess={(token) => setTurnstileToken(token)}
+                          options={{ theme: 'light' }}
+                        />
+                      </div>
                     </div>
-                  </div>
+                  )}
 
                   <div className="pt-4">
-                    <button 
-                      type="submit" 
-                      disabled={status === 'submitting' || !turnstileToken}
+                    <button
+                      type="submit"
+                      disabled={status === 'submitting' || (siteKey && !turnstileToken)}
                       className="w-full md:w-auto px-10 py-4 bg-[var(--color-ink)] text-white hover:bg-[var(--color-brass-deep)] transition-colors uppercase tracking-widest text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {status === 'submitting' ? 'Submitting...' : 'Submit Inquiry'}
@@ -246,12 +256,12 @@ export default function Contact() {
               <div>
                 <h4 className="text-xs uppercase tracking-widest text-[var(--color-ink-muted)] font-semibold mb-4">Direct Contact</h4>
                 <p className="text-lg font-serif">
-                  <a href="mailto:hello@triadesign.studio" className="text-[var(--color-ink)] hover:text-[var(--color-brass-deep)] transition-colors underline decoration-1 underline-offset-4">
-                    hello@triadesign.studio
+                  <a href="mailto:triadesignteam@gmail.com" className="text-[var(--color-ink)] hover:text-[var(--color-brass-deep)] transition-colors underline decoration-1 underline-offset-4">
+                    triadesignteam@gmail.com
                   </a>
                 </p>
               </div>
-              
+
               <div>
                 <h4 className="text-xs uppercase tracking-widest text-[var(--color-ink-muted)] font-semibold mb-4">Location</h4>
                 <p className="text-lg font-serif text-[var(--color-ink)]">
@@ -266,7 +276,7 @@ export default function Contact() {
                 <p className="text-sm text-[var(--color-ink-muted)] mb-4">
                   We also offer free design audits and strategic consultation for existing platforms.
                 </p>
-                <a href="mailto:hello@triadesign.studio?subject=Free%20Design%20Audit%20Inquiry" className="text-xs uppercase tracking-widest font-semibold text-[var(--color-brass-deep)] hover:text-[var(--color-ink)] transition-colors">
+                <a href="mailto:triadesignteam@gmail.com?subject=Free%20Design%20Audit%20Inquiry" className="text-xs uppercase tracking-widest font-semibold text-[var(--color-brass-deep)] hover:text-[var(--color-ink)] transition-colors">
                   Book your free audit &rarr;
                 </a>
               </div>

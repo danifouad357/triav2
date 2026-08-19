@@ -34,8 +34,8 @@ export default function StartProject() {
             </p>
             <div className="flex flex-col gap-6">
               <div>
-                <a href="mailto:hello@triadesign.studio" style={{ color: 'var(--color-white)', textDecoration: 'underline', textUnderlineOffset: '4px' }}>
-                  hello@triadesign.studio
+                <a href="mailto:triadesignteam@gmail.com" style={{ color: 'var(--color-white)', textDecoration: 'underline', textUnderlineOffset: '4px' }}>
+                  triadesignteam@gmail.com
                 </a>
                 <span style={{ display: 'block', marginTop: 'var(--space-sm)', fontSize: '0.875rem', color: 'rgba(255,255,255,0.6)' }}>
                   Replies within <CountUp to={24} suffix=" hours" />.
