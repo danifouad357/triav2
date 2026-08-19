@@ -1,0 +1,10 @@
+# Tria Design
+
+Tria Design is an independent web design and development studio building distinctive digital experiences for ambitious businesses.
+
+## Links
+- [Home](/)
+- [About](/about)
+- [Work](/work)
+- [Pricing](/pricing)
+- [Contact](/contact)

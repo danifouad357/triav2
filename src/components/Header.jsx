@@ -143,6 +143,8 @@ export default function Header() {
                 alt="Tria Design Logo" 
                 className="h-8 w-auto"
                 style={{ mixBlendMode: 'multiply' }}
+                width="734"
+                height="638"
               />
               <span className="font-serif text-[1.1rem] text-[var(--color-text)]">Tria Design</span>
             </a>

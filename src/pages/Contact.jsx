@@ -87,7 +87,7 @@ export default function Contact() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <span className="cs-system-font text-[var(--color-brass-deep)] mb-6 block">04 // CONTACT</span>
+            <span className="cs-system-font text-[var(--color-ink-muted)] mb-6 block">04 // CONTACT</span>
             <h1 className="text-5xl md:text-7xl font-serif text-[var(--color-ink)] mb-8 tracking-tight">
               Start a Project.
             </h1>
@@ -108,7 +108,7 @@ export default function Contact() {
                   animate={{ opacity: 1, y: 0 }}
                   className="bg-white p-8 md:p-12 border border-[var(--color-hair-cream)] rounded-sm"
                 >
-                  <h3 className="text-2xl font-serif text-[var(--color-ink)] mb-4">Request Received</h3>
+                  <h2 className="text-2xl font-serif text-[var(--color-ink)] mb-4">Request Received</h2>
                   <p className="text-[var(--color-ink-muted)] font-sans">
                     Thank you for reaching out. We have received your inquiry and will be in touch shortly to discuss the next steps.
                   </p>
@@ -254,7 +254,7 @@ export default function Contact() {
           <div className="md:col-span-4">
             <div className="sticky top-32 space-y-12">
               <div>
-                <h4 className="text-xs uppercase tracking-widest text-[var(--color-ink-muted)] font-semibold mb-4">Direct Contact</h4>
+                <h2 className="text-xs uppercase tracking-widest text-[var(--color-ink-muted)] font-semibold mb-4">Direct Contact</h2>
                 <p className="text-lg font-serif">
                   <a href="mailto:triadesignteam@gmail.com" className="text-[var(--color-ink)] hover:text-[var(--color-brass-deep)] transition-colors underline decoration-1 underline-offset-4">
                     triadesignteam@gmail.com
@@ -263,7 +263,7 @@ export default function Contact() {
               </div>
 
               <div>
-                <h4 className="text-xs uppercase tracking-widest text-[var(--color-ink-muted)] font-semibold mb-4">Location</h4>
+                <h2 className="text-xs uppercase tracking-widest text-[var(--color-ink-muted)] font-semibold mb-4">Location</h2>
                 <p className="text-lg font-serif text-[var(--color-ink)]">
                   Abu Dhabi, UAE
                   <br />
@@ -272,11 +272,11 @@ export default function Contact() {
               </div>
 
               <div className="p-6 bg-[#F3F0EC] border border-[var(--color-hair-cream)]">
-                <h4 className="text-sm font-serif text-[var(--color-ink)] mb-2">Not ready for a full build?</h4>
+                <h2 className="text-sm font-serif text-[var(--color-ink)] mb-2">Not ready for a full build?</h2>
                 <p className="text-sm text-[var(--color-ink-muted)] mb-4">
                   We also offer free design audits and strategic consultation for existing platforms.
                 </p>
-                <a href="mailto:triadesignteam@gmail.com?subject=Free%20Design%20Audit%20Inquiry" className="text-xs uppercase tracking-widest font-semibold text-[var(--color-brass-deep)] hover:text-[var(--color-ink)] transition-colors">
+                <a href="mailto:triadesignteam@gmail.com?subject=Free%20Design%20Audit%20Inquiry" className="text-xs uppercase tracking-widest font-semibold text-[var(--color-ink)] hover:text-[var(--color-brass-deep)] transition-colors">
                   Book your free audit &rarr;
                 </a>
               </div>
