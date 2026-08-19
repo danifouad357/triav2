@@ -284,6 +284,13 @@
       setTimeout(() => { preloader?.remove(); }, 850);
     }
   });
+
+  // Fallback in case tria-app-ready is never dispatched (e.g. video load failure)
+  setTimeout(() => {
+    if (!appReady) {
+      window.dispatchEvent(new Event('tria-app-ready'));
+    }
+  }, 5000);
 })();
 </script>
 

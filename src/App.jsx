@@ -1,6 +1,18 @@
-import { lazy, Suspense } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { ReactLenis } from 'lenis/react';
+
+function PreloaderManager() {
+  const location = useLocation();
+  
+  useEffect(() => {
+    if (location.pathname !== '/') {
+      window.dispatchEvent(new Event('tria-app-ready'));
+    }
+  }, [location.pathname]);
+
+  return null;
+}
 
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -62,6 +74,7 @@ function App() {
 
   return (
     <Router>
+      <PreloaderManager />
       {isTouchDevice ? (
         content
       ) : (
