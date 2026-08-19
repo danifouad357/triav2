@@ -61,8 +61,8 @@ export async function onRequestPost(context) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'Tria Design <hello@triadesign.studio>',
-          to: 'hello@triadesign.studio',
+          from: 'onboarding@resend.dev',
+          to: 'triadesignteam@gmail.com',
           subject: `New Inquiry from ${name} - ${projectType || 'General'}`,
           html: `
             <h3>New Inquiry</h3>
