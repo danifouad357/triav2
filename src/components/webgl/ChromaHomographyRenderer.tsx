@@ -870,7 +870,7 @@ export default function ChromaHomographyRenderer({
         playsInline
         muted
         aria-hidden="true"
-        preload="auto"
+        preload="metadata"
         onCanPlayThrough={() => {
           if (!videoSrcLoop) {
             if (onVideoLoaded) onVideoLoaded();
@@ -909,7 +909,7 @@ export default function ChromaHomographyRenderer({
           muted
           aria-hidden="true"
           loop
-          preload="metadata"
+          preload="none"
           onEnded={(e) => {
             e.currentTarget.currentTime = 0;
             playSafe(e.currentTarget);
@@ -924,7 +924,7 @@ export default function ChromaHomographyRenderer({
           playsInline
           muted
           aria-hidden="true"
-          preload="metadata"
+          preload="none"
         />
       )}
       <canvas

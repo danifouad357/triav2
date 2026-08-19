@@ -95,7 +95,7 @@ export class TriaCanvasEngine {
   
   // Vector Artwork & Assets
   logoImage: HTMLImageElement | null = null;
-  lockFieldSvgImage: HTMLImageElement | HTMLCanvasElement | null = null;
+  lockFieldSvgImage: HTMLImageElement | null = null;
   svgLoaded: boolean = false;
   
   // Kernel state
@@ -208,11 +208,6 @@ export class TriaCanvasEngine {
       <stop offset="75%" stop-color="#34d399" stop-opacity="0.65" />
       <stop offset="100%" stop-color="#064e3b" stop-opacity="0" />
     </linearGradient>
-
-    <filter id="soft-glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="8" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
-    </filter>
   </defs>
 
   <!-- Sky Base -->
@@ -223,15 +218,15 @@ export class TriaCanvasEngine {
 
   <!-- Right Background Lobe -->
   <path d="M 1100 1080 C 1050 750, 1300 380, 1600 360 C 1780 350, 1920 480, 1920 620 L 1920 1080 Z" fill="url(#right-lobe-body)" />
-  <path d="M 1100 1080 C 1050 750, 1300 380, 1600 360 C 1780 350, 1920 480, 1920 620" fill="none" stroke="url(#right-rim)" stroke-width="4" filter="url(#soft-glow)" />
+  <path d="M 1100 1080 C 1050 750, 1300 380, 1600 360 C 1780 350, 1920 480, 1920 620" fill="none" stroke="url(#right-rim)" stroke-width="4" />
 
   <!-- Midground Fluid Dune Wave -->
   <path d="M 0 680 C 450 620, 750 420, 1150 490 C 1500 550, 1750 820, 1920 780 L 1920 1080 L 0 1080 Z" fill="url(#dune-body)" />
-  <path d="M 0 680 C 450 620, 750 420, 1150 490 C 1500 550, 1750 820, 1920 780" fill="none" stroke="url(#dune-crest)" stroke-width="4.5" filter="url(#soft-glow)" />
+  <path d="M 0 680 C 450 620, 750 420, 1150 490 C 1500 550, 1750 820, 1920 780" fill="none" stroke="url(#dune-crest)" stroke-width="4.5" />
 
   <!-- Left Organic Jade Bulb -->
   <path d="M 0 1080 L 0 380 C 160 370, 320 430, 420 540 C 560 690, 520 920, 430 1080 Z" fill="url(#jade-bulb-body)" />
-  <path d="M 0 380 C 160 370, 320 430, 420 540 C 560 690, 520 920, 430 1080" fill="none" stroke="url(#bulb-rim)" stroke-width="5" filter="url(#soft-glow)" />
+  <path d="M 0 380 C 160 370, 320 430, 420 540 C 560 690, 520 920, 430 1080" fill="none" stroke="url(#bulb-rim)" stroke-width="5" />
   <!-- Gloss Highlight Arc on Bulb -->
   <path d="M 120 420 C 240 450, 340 520, 390 610" fill="none" stroke="rgba(255, 255, 255, 0.45)" stroke-width="2.5" stroke-linecap="round" />
 </svg>`;
@@ -239,16 +234,7 @@ export class TriaCanvasEngine {
     const img = new Image();
     img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgData.trim());
     img.onload = () => {
-      const offscreen = document.createElement('canvas');
-      offscreen.width = 1920;
-      offscreen.height = 1080;
-      const offCtx = offscreen.getContext('2d');
-      if (offCtx) {
-        offCtx.drawImage(img, 0, 0, 1920, 1080);
-        this.lockFieldSvgImage = offscreen;
-      } else {
-        this.lockFieldSvgImage = img; // Fallback
-      }
+      this.lockFieldSvgImage = img;
       this.svgLoaded = true;
     };
   }
