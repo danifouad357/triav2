@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:api": "wrangler pages dev -- vite",
-    "build": "vite build",
-    "postbuild": "node scripts/generate-sitemap.js",
+    "build": "vite build && node scripts/generate-sitemap.js",
     "lint": "oxlint",
     "preview": "vite preview"
   },

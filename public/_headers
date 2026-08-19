@@ -23,3 +23,7 @@
 # HTML shouldn't be heavily cached
 /*.html
   Cache-Control: public, max-age=0, must-revalidate
+
+# XML files
+/*.xml
+  Content-Type: application/xml
